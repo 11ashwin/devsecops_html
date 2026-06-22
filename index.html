@@ -1,201 +1,717 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ashwin Yadav | Senior Cybersecurity Engineer</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ashwin Yadav | Senior Cybersecurity Engineer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Reset & base ─────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:          #0d1117;
+      --surface:     #161b22;
+      --surface-2:   #1f2937;
+      --border:      rgba(255,255,255,0.07);
+      --border-hover:rgba(255,255,255,0.14);
+      --text:        #e6edf3;
+      --muted:       #8b949e;
+      --accent:      #58a6ff;
+      --accent-dim:  rgba(88,166,255,0.12);
+      --success:     #3fb950;
+      --success-dim: rgba(63,185,80,0.12);
+      --radius-sm:   6px;
+      --radius-md:   10px;
+      --radius-lg:   14px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 15px;
+      line-height: 1.65;
+      min-height: 100vh;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    ul { list-style: none; padding: 0; }
+
+    /* ── Layout ───────────────────────────────────── */
+    .page-wrap {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 0 20px 80px;
+    }
+
+    /* ── Header ───────────────────────────────────── */
+    header {
+      padding: 56px 0 36px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 0;
+    }
+
+    .header-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .header-left h1 {
+      font-size: 26px;
+      font-weight: 600;
+      letter-spacing: -0.3px;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .header-left .role {
+      font-size: 14px;
+      color: var(--muted);
+      font-weight: 400;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--success);
+      background: var(--success-dim);
+      border: 1px solid rgba(63,185,80,0.25);
+      padding: 5px 12px;
+      border-radius: 100px;
+      white-space: nowrap;
+    }
+
+    .status-badge::before {
+      content: '';
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--success);
+      flex-shrink: 0;
+    }
+
+    .contact-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 20px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .contact-row a { color: var(--muted); }
+    .contact-row a:hover { color: var(--accent); text-decoration: none; }
+
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .contact-item svg {
+      width: 14px;
+      height: 14px;
+      opacity: 0.6;
+      flex-shrink: 0;
+    }
+
+    /* ── Tab nav ──────────────────────────────────── */
+    .tab-nav {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 36px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .tab-nav::-webkit-scrollbar { display: none; }
+
+    .tab-btn {
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      padding: 14px 18px;
+      font-size: 13.5px;
+      font-weight: 400;
+      color: var(--muted);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: color 0.18s, border-color 0.18s;
+      margin-bottom: -1px;
+      letter-spacing: 0.01em;
+      font-family: inherit;
+    }
+
+    .tab-btn:hover { color: var(--text); }
+
+    .tab-btn.active {
+      color: var(--text);
+      font-weight: 500;
+      border-bottom-color: var(--accent);
+    }
+
+    /* ── Tab panels ───────────────────────────────── */
+    .tab-panel { display: none; }
+    .tab-panel.active {
+      display: block;
+      animation: fadein 0.22s ease;
+    }
+
+    @keyframes fadein {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Section label ────────────────────────────── */
+    .sec-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+
+    /* ── Summary card ─────────────────────────────── */
+    .summary-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 20px 22px;
+      margin-bottom: 32px;
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.75;
+    }
+
+    /* ── Achievement grid ─────────────────────────── */
+    .achieve-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 10px;
+      margin-bottom: 36px;
+    }
+
+    .achieve-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 18px 16px;
+      transition: border-color 0.18s;
+    }
+
+    .achieve-card:hover { border-color: var(--border-hover); }
+
+    .achieve-num {
+      font-size: 28px;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: -0.5px;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .achieve-desc {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    /* ── Skills grid ──────────────────────────────── */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+    }
+
+    .skill-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      transition: border-color 0.18s;
+    }
+
+    .skill-card:hover { border-color: var(--border-hover); }
+
+    .skill-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+    }
+
+    .skill-card p {
+      font-size: 12.5px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ── Job entries ──────────────────────────────── */
+    .job-list { display: flex; flex-direction: column; gap: 0; }
+
+    .job {
+      padding: 24px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .job:last-child { border-bottom: none; }
+
+    .job-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+
+    .job-title-wrap { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+    .job-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .current-tag {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--success);
+      background: var(--success-dim);
+      border: 1px solid rgba(63,185,80,0.2);
+      padding: 2px 9px;
+      border-radius: 100px;
+    }
+
+    .job-date {
+      font-size: 12.5px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .job-company {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+
+    .job-bullets {
+      padding-left: 16px;
+      list-style: disc;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .job-bullets li {
+      font-size: 13.5px;
+      color: var(--muted);
+      line-height: 1.6;
+      list-style: disc;
+    }
+
+    .job-bullets li::marker { color: var(--border-hover); }
+
+    /* ── Project card ─────────────────────────────── */
+    .project-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 20px 22px;
+      margin-bottom: 12px;
+      transition: border-color 0.18s;
+    }
+
+    .project-card:hover { border-color: var(--border-hover); }
+
+    .project-name {
+      font-size: 14.5px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 3px;
+    }
+
+    .project-meta {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+
+    .project-bullets {
+      padding-left: 16px;
+      list-style: disc;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .project-bullets li {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.6;
+      list-style: disc;
+    }
+
+    .project-bullets li::marker { color: var(--border-hover); }
+
+    /* ── Credentials ──────────────────────────────── */
+    .edu-block {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 20px 22px;
+      margin-bottom: 32px;
+    }
+
+    .edu-degree {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 3px;
+    }
+
+    .edu-school { font-size: 13px; color: var(--muted); }
+
+    .cert-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+
+    .cert-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 15px 18px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      font-size: 13.5px;
+      color: var(--text);
+      transition: border-color 0.18s;
+    }
+
+    .cert-item:hover { border-color: var(--border-hover); }
+
+    .cert-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-sm);
+      background: var(--accent-dim);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .cert-icon svg {
+      width: 16px;
+      height: 16px;
+      color: var(--accent);
+      stroke: var(--accent);
+    }
+
+    /* ── Spacing helpers ──────────────────────────── */
+    .mb-8  { margin-bottom: 8px; }
+    .mb-16 { margin-bottom: 16px; }
+    .mb-28 { margin-bottom: 28px; }
+    .mt-32 { margin-top: 32px; }
+
+    /* ── Responsive ───────────────────────────────── */
+    @media (max-width: 600px) {
+      header { padding: 36px 0 28px; }
+      .header-left h1 { font-size: 22px; }
+      .achieve-num { font-size: 24px; }
+      .tab-btn { padding: 12px 14px; font-size: 13px; }
+    }
+  </style>
 </head>
 <body>
 
-    <header>
-        <h1>ASHWIN YADAV</h1>
-        <p class="subtitle">Senior Cybersecurity Engineer</p>
-        <div class="contact-info">
-            <p>📍 Mumbai, India | 📱 +91 82916 60070 | ✉️ <a href="mailto:ashwin09yadav@gmail.com">ashwin09yadav@gmail.com</a></p>
-            <p>🌐 <a href="https://linkedin.com/in/ashwinyadav11" target="_blank">linkedin.com/in/ashwinyadav11</a></p>
-            <p class="badge">Indian National | Open to Relocation: Southeast Asia & Asia-Pacific</p>
+<div class="page-wrap">
+
+  <!-- ── HEADER ─────────────────────────────────── -->
+  <header>
+    <div class="header-top">
+      <div class="header-left">
+        <h1>Ashwin Yadav</h1>
+        <p class="role">Senior Cybersecurity Engineer · Mumbai, India</p>
+      </div>
+      <span class="status-badge">Open to APAC relocation</span>
+    </div>
+
+    <div class="contact-row">
+      <a class="contact-item" href="tel:+918291660070">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8a19.79 19.79 0 01-3.07-8.67A2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/></svg>
+        +91 82916 60070
+      </a>
+      <a class="contact-item" href="mailto:ashwin09yadav@gmail.com">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        ashwin09yadav@gmail.com
+      </a>
+      <a class="contact-item" href="https://linkedin.com/in/ashwinyadav11" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        linkedin.com/in/ashwinyadav11
+      </a>
+    </div>
+  </header>
+
+  <!-- ── TAB NAV ────────────────────────────────── -->
+  <nav class="tab-nav" role="tablist" aria-label="Resume sections">
+    <button class="tab-btn active" role="tab" aria-selected="true"  onclick="switchTab('summary',this)">Professional summary</button>
+    <button class="tab-btn"        role="tab" aria-selected="false" onclick="switchTab('experience',this)">Work experience</button>
+    <button class="tab-btn"        role="tab" aria-selected="false" onclick="switchTab('projects',this)">Projects &amp; skills</button>
+    <button class="tab-btn"        role="tab" aria-selected="false" onclick="switchTab('credentials',this)">Education &amp; certs</button>
+  </nav>
+
+  <!-- ══════════════════════════════════════════════
+       PANEL 1 — Professional summary
+  ══════════════════════════════════════════════════ -->
+  <div id="panel-summary" class="tab-panel active">
+
+    <p class="sec-label mb-16">About</p>
+    <div class="summary-card mb-28">
+      Cybersecurity professional with 4+ years of experience in incident response, WAF management, EDR, cloud security, and vulnerability management. Proven track record detecting and neutralising threats using MITRE ATT&CK-aligned frameworks across enterprise environments in financial media, data centers, and critical infrastructure. Seeking a senior cybersecurity role across Southeast Asia and the Asia-Pacific region.
+    </div>
+
+    <p class="sec-label mb-16">Key achievements</p>
+    <div class="achieve-grid mb-28">
+      <div class="achieve-card">
+        <div class="achieve-num">40%</div>
+        <div class="achieve-desc">Cloud risk reduction within 3 months via Orca Security at Code Young</div>
+      </div>
+      <div class="achieve-card">
+        <div class="achieve-num">30%</div>
+        <div class="achieve-desc">Faster MTTD at Network18 via redesigned CrowdStrike + Chronicle triage workflows</div>
+      </div>
+      <div class="achieve-card">
+        <div class="achieve-num">0</div>
+        <div class="achieve-desc">Production downtime during WAF migration (F5 Silverline → F5 XC) for 10+ clients</div>
+      </div>
+      <div class="achieve-card">
+        <div class="achieve-num">25%</div>
+        <div class="achieve-desc">Fewer Akamai WAF false positives through policy optimisation and bot tuning</div>
+      </div>
+    </div>
+
+    <p class="sec-label mb-16">Technical areas</p>
+    <div class="skills-grid">
+      <div class="skill-card">
+        <div class="skill-title">Detection &amp; response</div>
+        <p>CrowdStrike Falcon, Cortex XDR, IBM QRadar SIEM, Google Chronicle, MITRE ATT&amp;CK</p>
+      </div>
+      <div class="skill-card">
+        <div class="skill-title">WAF &amp; web security</div>
+        <p>Akamai WAF, F5 Silverline, F5 XC, OWASP Top 10, Bot Management, SSL/TLS</p>
+      </div>
+      <div class="skill-card">
+        <div class="skill-title">Cloud &amp; DevSecOps</div>
+        <p>WIZ, Orca Security, AWS, Docker Buildx, Kubernetes, GitHub Actions CI/CD</p>
+      </div>
+      <div class="skill-card">
+        <div class="skill-title">Threat intel &amp; infra</div>
+        <p>FortiRecon, Aquilai, Threat Hunting, DDoS Mitigation, Enterprise Linux</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       PANEL 2 — Work experience
+  ══════════════════════════════════════════════════ -->
+  <div id="panel-experience" class="tab-panel">
+
+    <p class="sec-label mb-16">Career history</p>
+
+    <div class="job-list">
+
+      <div class="job">
+        <div class="job-meta">
+          <div class="job-title-wrap">
+            <span class="job-title">Senior Cybersecurity Engineer</span>
+            <span class="current-tag">Current</span>
+          </div>
+          <span class="job-date">Aug 2025 – Present</span>
         </div>
-        
-        <!-- Tab Navigation -->
-        <div class="tabs">
-            <button class="tab-btn active" onclick="openTab(event, 'Overview')">Overview & Projects</button>
-            <button class="tab-btn" onclick="openTab(event, 'Experience')">Work Experience</button>
+        <p class="job-company">Network18 Media &amp; Investments Limited · Mumbai</p>
+        <ul class="job-bullets">
+          <li>Led enterprise-wide security monitoring across CrowdStrike Falcon and Google Chronicle SIEM, triaging 100+ alerts per week and reducing MTTD by 30% through streamlined triage workflows.</li>
+          <li>Conducted proactive threat hunting across endpoint, network, and cloud environments; validated IOCs against MITRE ATT&amp;CK and executed containment per documented IR procedures.</li>
+          <li>Managed Akamai WAF for 20+ business-critical applications—URL onboarding, bespoke security policy creation, and rule integrity maintenance across production environments.</li>
+          <li>Optimised whitelist strategies, bot management configurations, and behavioural traffic directives, reducing false-positive rate by 25%; collaborated with DevOps for zero-downtime deployments.</li>
+          <li>Led end-to-end vulnerability management using CVSS-based identification, prioritisation, tracking, and remediation for critical CVEs across infrastructure and cloud applications.</li>
+        </ul>
+      </div>
+
+      <div class="job">
+        <div class="job-meta">
+          <div class="job-title-wrap">
+            <span class="job-title">Senior SOC Analyst</span>
+          </div>
+          <span class="job-date">Mar 2024 – Aug 2025</span>
         </div>
-    </header>
+        <p class="job-company">NTT Global Data Centers &amp; Cloud Infrastructure India Limited · Mumbai</p>
+        <ul class="job-bullets">
+          <li>Oversaw WAF migration from F5 Silverline to F5 XC for 10+ enterprise clients; managed planning, implementation, SSL certificate updates, and post-migration validation with zero production downtime.</li>
+          <li>Monitored and investigated security logs via IBM QRadar SIEM; performed root cause analysis and in-depth malware analysis (static and behavioural) to determine scope and impact.</li>
+          <li>Conducted cloud security risk assessments using WIZ and Orca Security; identified and prioritised misconfigurations by risk exposure and tracked remediation to closure.</li>
+        </ul>
+      </div>
 
-    <main>
-        <!-- TAB 1: OVERVIEW & PROJECTS -->
-        <div id="Overview" class="tab-content active">
-            <section class="profile">
-                <h2>Professional Summary</h2>
-                <p>Cybersecurity professional with 4+ years of experience in incident response, WAF management, EDR, cloud security, and vulnerability management. Proven track record in detecting and neutralizing threats using MITRE ATT&CK aligned frameworks across enterprise environments in the financial media, data centers, and critical infrastructure sectors. Experience in securing large-scale digital infrastructure with measurable reductions in MTTD, false-positive rates, and cloud risk exposure. Seeking a senior cybersecurity role across Southeast Asia and the Asia-Pacific region.</p>
-            </section>
-
-            <section class="projects">
-                <h2>DevSecOps Projects</h2>
-                <div class="job">
-                    <div class="job-header">
-                        <h3>Automated Secure Kubernetes Deployment Pipeline</h3>
-                        <span class="company">Self-Hosted Infrastructure</span>
-                        <span class="date">Completed 2026</span>
-                    </div>
-                    <ul>
-                        <li>Engineered an automated CI/CD pipeline using <strong>GitHub Actions</strong> to perform multi-architecture (ARM64/AMD64) Docker builds and securely push images to Docker Hub via repository secrets.</li>
-                        <li>Deployed a highly available application to a local <strong>Kubernetes (Minikube)</strong> cluster using an NGINX Ingress Controller for advanced traffic routing and custom local DNS mapping.</li>
-                        <li>Hardened infrastructure by implementing strict Pod Security Contexts—enforcing non-root execution and dropping default Linux capabilities to mitigate container breakouts.</li>
-                        <li>Diagnosed and resolved complex deployment challenges, including TLS certificate validation failures, architecture mismatches, and container loopback networking anomalies.</li>
-                    </ul>
-                </div>
-            </section>
-
-            <section class="achievements">
-                <h2>Key Achievements</h2>
-                <ul>
-                    <li><strong>40% Risk Reduction:</strong> Reduced cloud security risks by 40% within 3 months via Orca Security deployment and remediation at Code Young.</li>
-                    <li><strong>30% Faster Detection:</strong> Improved MTTD by 30% at Network18 through redesigned SOC triage workflows using CrowdStrike Falcon and Chronicle.</li>
-                    <li><strong>Zero-Downtime Migration:</strong> Led zero-downtime WAF migration (F5 Silverline to F5 XC) for 10+ enterprise clients at NTT Global.</li>
-                    <li><strong>25% Fewer False Positives:</strong> Reduced Akamai WAF false-positive rate by 25% through targeted policy optimisation and bot management tuning at Network18.</li>
-                </ul>
-            </section>
-
-            <section class="skills">
-                <h2>Technical Skills</h2>
-                <div class="skills-grid">
-                    <div>
-                        <h3>Detection & Response</h3>
-                        <p>CrowdStrike Falcon, Cortex XDR, IBM QRadar SIEM, Google Chronicle, MITRE ATT&CK</p>
-                    </div>
-                    <div>
-                        <h3>WAF & Web Security</h3>
-                        <p>Akamai WAF, F5 Silverline, F5 XC, OWASP Top 10, Bot Management, SSL/TLS</p>
-                    </div>
-                    <div>
-                        <h3>Cloud & DevSecOps</h3>
-                        <p>WIZ, Orca Security, AWS, Docker Buildx, Kubernetes, GitHub Actions CI/CD</p>
-                    </div>
-                    <div>
-                        <h3>Threat Intel & Infra</h3>
-                        <p>FortiRecon, Aquilai, Threat Hunting, DDoS Mitigation, Enterprise Linux</p>
-                    </div>
-                </div>
-            </section>
-
-            <section class="education-certs">
-                <div class="grid-2col">
-                    <div>
-                        <h2>Education</h2>
-                        <p><strong>Bachelor of Engineering</strong></p>
-                        <p>University of Mumbai | 2019</p>
-                    </div>
-                    <div>
-                        <h2>Certifications</h2>
-                        <ul class="cert-list">
-                            <li>🛡️ Certified Ethical Hacker (CEHv13)</li>
-                            <li>🛡️ Cortex XDR: Multi-Method Malware Prevention</li>
-                            <li>🛡️ Akamai Web Performance Foundations</li>
-                        </ul>
-                    </div>
-                </div>
-            </section>
+      <div class="job">
+        <div class="job-meta">
+          <div class="job-title-wrap">
+            <span class="job-title">Test Engineer — Network Security</span>
+          </div>
+          <span class="job-date">Oct 2023 – Mar 2024</span>
         </div>
+        <p class="job-company">Clear Trail · Indore</p>
+        <ul class="job-bullets">
+          <li>Contributed to the ComTrail-NX Target Oriented System; created datasets for diverse protocols with in-depth understanding of L2/L3/L4/L7 per the OSI model.</li>
+          <li>Performed Deep Packet Inspection (DPI), configured test topologies, and conducted packet analysis using Wireshark to validate network traffic behaviour.</li>
+        </ul>
+      </div>
 
-        <!-- TAB 2: WORK EXPERIENCE -->
-        <div id="Experience" class="tab-content">
-            <section class="experience">
-                <h2>Work Experience</h2>
-                
-                <div class="job">
-                    <div class="job-header">
-                        <h3>Senior Cybersecurity Engineer</h3>
-                        <span class="company">Network18 Media & Investments Limited, Mumbai</span>
-                        <span class="date">August 2025 - Present</span>
-                    </div>
-                    <ul>
-                        <li>Led enterprise-wide security monitoring across CrowdStrike Falcon and Google Chronicle SIEM, triaging 100+ alerts per week and reducing MTTD by 30% through streamlined triage workflows.</li>
-                        <li>Conducted proactive threat hunting across endpoint, network, and cloud environments; validated IOCs against MITRE ATT&CK and executed containment measures per documented IR procedures.</li>
-                        <li>Managed Akamai WAF for 20+ business-critical applications—URL onboarding, bespoke security policy creation, and rule integrity maintenance across production environments.</li>
-                        <li>Optimised whitelist strategies, bot management configurations, and behavioural traffic directives, reducing false-positive rate by 25%; collaborated with DevOps for zero-downtime deployments.</li>
-                        <li>Led end-to-end vulnerability management using CVSS-based identification, prioritisation, tracking, and remediation for critical CVEs across infrastructure and cloud applications.</li>
-                    </ul>
-                </div>
-
-                <div class="job">
-                    <div class="job-header">
-                        <h3>Senior SOC Analyst</h3>
-                        <span class="company">NTT Global Data Centers & Cloud Infrastructure India Limited, Mumbai</span>
-                        <span class="date">March 2024 - August 2025</span>
-                    </div>
-                    <ul>
-                        <li>Oversaw WAF migration from F5 Silverline to F5 XC for 10+ enterprise clients; managed planning, implementation, SSL certificate updates, and post-migration validation with zero production downtime.</li>
-                        <li>Monitored and investigated security logs via IBM QRadar SIEM; performed root cause analysis and in-depth malware analysis (static and behavioural) to determine scope and impact.</li>
-                        <li>Conducted cloud security risk assessments using WIZ and Orca Security; identified and prioritised misconfigurations by risk exposure and tracked remediation to closure.</li>
-                    </ul>
-                </div>
-
-                <div class="job">
-                    <div class="job-header">
-                        <h3>Test Engineer — Network Security</h3>
-                        <span class="company">Clear Trail, Indore</span>
-                        <span class="date">October 2023 - March 2024</span>
-                    </div>
-                    <ul>
-                        <li>Contributed to the ComTrail-NX Target Oriented System; created datasets for diverse protocols with an in-depth understanding of L2/L3/L4/L7 per the OSI model.</li>
-                        <li>Performed Deep Packet Inspection (DPI), configured test topologies, and conducted packet analysis using Wireshark to validate network traffic behaviour.</li>
-                    </ul>
-                </div>
-
-                <div class="job">
-                    <div class="job-header">
-                        <h3>Test Engineer</h3>
-                        <span class="company">Code Young, Bengaluru</span>
-                        <span class="date">March 2022 - October 2023</span>
-                    </div>
-                    <ul>
-                        <li>Configured and optimised Akamai WAF for enterprise applications against OWASP Top 10 vulnerabilities; crafted custom WAF rule sets with regular tuning to minimise false positives.</li>
-                        <li>Achieved a 40% reduction in cloud security risks within three months by deploying and tuning Orca Security across the cloud environment.</li>
-                    </ul>
-                </div>
-
-                <div class="job">
-                    <div class="job-header">
-                        <h3>Graduate Engineer Trainee — OT/IT Security</h3>
-                        <span class="company">Bharat Petroleum Corporation Limited (BPCL), Mumbai</span>
-                        <span class="date">November 2020 - January 2022</span>
-                    </div>
-                    <ul>
-                        <li>Collaborated with the SCADA Security Team to strengthen OT/IT network security protocols across critical petroleum infrastructure.</li>
-                    </ul>
-                </div>
-            </section>
+      <div class="job">
+        <div class="job-meta">
+          <div class="job-title-wrap">
+            <span class="job-title">Test Engineer</span>
+          </div>
+          <span class="job-date">Mar 2022 – Oct 2023</span>
         </div>
-    </main>
+        <p class="job-company">Code Young · Bengaluru</p>
+        <ul class="job-bullets">
+          <li>Configured and optimised Akamai WAF for enterprise applications against OWASP Top 10 vulnerabilities; crafted custom rule sets with regular tuning to minimise false positives.</li>
+          <li>Achieved a 40% reduction in cloud security risks within three months by deploying and tuning Orca Security across the cloud environment.</li>
+        </ul>
+      </div>
 
-    <footer>
-        <p>&copy; 2026 Ashwin Yadav. Tailored for APAC Cybersecurity Roles.</p>
-    </footer>
+      <div class="job">
+        <div class="job-meta">
+          <div class="job-title-wrap">
+            <span class="job-title">Graduate Engineer Trainee — OT/IT Security</span>
+          </div>
+          <span class="job-date">Nov 2020 – Jan 2022</span>
+        </div>
+        <p class="job-company">Bharat Petroleum Corporation Limited (BPCL) · Mumbai</p>
+        <ul class="job-bullets">
+          <li>Collaborated with the SCADA Security Team to strengthen OT/IT network security protocols across critical petroleum infrastructure.</li>
+        </ul>
+      </div>
 
-    <!-- JavaScript for Tab Switching -->
-    <script>
-        function openTab(evt, tabName) {
-            // Hide all elements with class="tab-content"
-            var tabcontent = document.getElementsByClassName("tab-content");
-            for (var i = 0; i < tabcontent.length; i++) {
-                tabcontent[i].style.display = "none";
-                tabcontent[i].classList.remove("active");
-            }
+    </div>
+  </div>
 
-            // Remove the class "active" from all tab buttons
-            var tablinks = document.getElementsByClassName("tab-btn");
-            for (var i = 0; i < tablinks.length; i++) {
-                tablinks[i].classList.remove("active");
-            }
+  <!-- ══════════════════════════════════════════════
+       PANEL 3 — Projects & skills
+  ══════════════════════════════════════════════════ -->
+  <div id="panel-projects" class="tab-panel">
 
-            // Show the current tab, and add an "active" class to the button that opened the tab
-            document.getElementById(tabName).style.display = "block";
-            document.getElementById(tabName).classList.add("active");
-            evt.currentTarget.classList.add("active");
-        }
-    </script>
+    <p class="sec-label mb-16">DevSecOps projects</p>
+
+    <div class="project-card">
+      <p class="project-name">Automated secure Kubernetes deployment pipeline</p>
+      <p class="project-meta">Self-hosted infrastructure · Completed 2026</p>
+      <ul class="project-bullets">
+        <li>Engineered an automated CI/CD pipeline using GitHub Actions to perform multi-architecture (ARM64/AMD64) Docker builds and securely push images to Docker Hub via repository secrets.</li>
+        <li>Deployed a highly available application to a local Kubernetes (Minikube) cluster using an NGINX Ingress Controller for advanced traffic routing and custom local DNS mapping.</li>
+        <li>Hardened infrastructure by implementing strict Pod Security Contexts—enforcing non-root execution and dropping default Linux capabilities to mitigate container breakouts.</li>
+        <li>Diagnosed and resolved complex deployment challenges including TLS certificate validation failures, architecture mismatches, and container loopback networking anomalies.</li>
+      </ul>
+    </div>
+
+    <p class="sec-label mt-32 mb-16">Tools &amp; platforms</p>
+    <div class="skills-grid">
+      <div class="skill-card">
+        <div class="skill-title">Offensive tools</div>
+        <p>Burp Suite, Kali Linux, Nmap, Wireshark, Metasploit</p>
+      </div>
+      <div class="skill-card">
+        <div class="skill-title">Infrastructure</div>
+        <p>Docker Swarm, Kubernetes, Linux, Windows Server, VMware</p>
+      </div>
+      <div class="skill-card">
+        <div class="skill-title">SIEM &amp; monitoring</div>
+        <p>IBM QRadar, Google Chronicle, Splunk, ELK Stack</p>
+      </div>
+      <div class="skill-card">
+        <div class="skill-title">Frameworks</div>
+        <p>MITRE ATT&amp;CK, CVSS, OWASP, NIST CSF, ISO 27001</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       PANEL 4 — Education & certs
+  ══════════════════════════════════════════════════ -->
+  <div id="panel-credentials" class="tab-panel">
+
+    <p class="sec-label mb-16">Education</p>
+    <div class="edu-block mb-28">
+      <p class="edu-degree">Bachelor of Engineering</p>
+      <p class="edu-school">University of Mumbai · 2019</p>
+    </div>
+
+    <p class="sec-label mb-16">Certifications</p>
+    <div class="cert-list">
+
+      <div class="cert-item">
+        <div class="cert-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path stroke="currentColor" d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        Certified Ethical Hacker (CEHv13)
+      </div>
+
+      <div class="cert-item">
+        <div class="cert-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path stroke="currentColor" d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        Cortex XDR: Multi-Method Malware Prevention
+      </div>
+
+      <div class="cert-item">
+        <div class="cert-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path stroke="currentColor" d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        Akamai Web Performance Foundations
+      </div>
+
+    </div>
+
+  </div>
+
+</div><!-- /page-wrap -->
+
+<script>
+  function switchTab(id, btn) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => {
+      b.classList.remove('active');
+      b.setAttribute('aria-selected', 'false');
+    });
+    document.getElementById('panel-' + id).classList.add('active');
+    btn.classList.add('active');
+    btn.setAttribute('aria-selected', 'true');
+  }
+</script>
+
 </body>
 </html>

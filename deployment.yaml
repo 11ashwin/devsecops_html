@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: resume-container
-        image: a05shwin11/devsecops_html:v2.0 # Pulls your validated image from Docker Hub
+        image: a05shwin11/devsecops_html:latest # Pulls your validated image from Docker Hub
         imagePullPolicy: Always
         ports:
         - containerPort: 80
