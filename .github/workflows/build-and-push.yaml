@@ -13,6 +13,32 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      # SECURITY GATE 1: Scan Infrastructure as Code (IaC) & Dockerfile
+      - name: Run Trivy FS Scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'table'
+          severity: 'HIGH,CRITICAL'
+
+      # Build a local, temporary image to scan before pushing
+      - name: Build local image for scanning
+        run: docker build -t temp-scan-image:latest .
+
+      # SECURITY GATE 2: Scan the container image for CVEs
+      - name: Run Trivy Image Scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'temp-scan-image:latest'
+          format: 'table'
+          # NOTE: Set to '0' to show the report without breaking the pipeline.
+          # In strict production, change this to '1' to block vulnerable deployments.
+          exit-code: '0' 
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'HIGH,CRITICAL'
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
