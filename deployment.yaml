@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: resume-deployment
+  labels:
+    app: secure-resume
+spec:
+  replicas: 2 # Runs two copies for high availability
+  selector:
+    matchLabels:
+      app: secure-resume
+  template:
+    metadata:
+      labels:
+        app: secure-resume
+    spec:
+      containers:
+      - name: resume-container
+        image: a05shwin11/devsecops_html:v2.0 # Pulls your validated image from Docker Hub
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        
+        # DevSecOps Hardening: Pod Security Context
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: false 
+          runAsNonRoot: true
+          runAsUser: 10001
+          capabilities:
+            drop:
+              - ALL # Drops all default Linux privileges to mitigate container breakouts
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: resume-service
+spec:
+  type: NodePort # Exposes the service outside your local cluster
+  selector:
+    app: secure-resume
+  ports:
+    - port: 80
+      targetPort: 80
+      nodePort: 30080 # Maps the app to http://localhost:30080 on your Mac
