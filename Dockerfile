@@ -1,4 +1,4 @@
-FROM nginx:alpine
+FROM nginx:1.19-alpine
 
 RUN addgroup -g 10001 appuser && \
     adduser -u 10001 -G appuser -h /home/appuser -D appuser
