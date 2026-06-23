@@ -34,7 +34,7 @@ jobs:
           format: 'table'
           # NOTE: Set to '0' to show the report without breaking the pipeline.
           # In strict production, change this to '1' to block vulnerable deployments.
-          exit-code: '0' 
+          exit-code: '1' 
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'HIGH,CRITICAL'
