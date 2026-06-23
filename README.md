@@ -87,3 +87,186 @@ The Ingress forwards the traffic to your **Service** (`resume-service`). The Ser
 
 **5. The Pod & Container (The Destination)**
 The traffic finally arrives at one of your **Pods** (e.g., `resume-deployment-5c9fc778c8-2wfvq`). Inside that Pod, your ARM64-compatible Docker container is running an NGINX or Apache web server on port `80`. The container serves up your HTML resume files and sends them all the way back down the chain to your browser.
+
+Here's a concise summary of everything you've accomplished in your **DevSecOps project**, including today's Falco work.
+
+---
+
+# DevSecOps Project Summary
+
+## 1. Containerized Application
+
+* Built a static HTML/CSS portfolio website.
+* Created a Docker image using NGINX.
+* Followed container security best practices by running the application as a **non-root user**.
+
+---
+
+## 2. CI/CD Pipeline with GitHub Actions
+
+Implemented an automated pipeline that:
+
+* Checks out the source code.
+* Performs an Infrastructure-as-Code (IaC) and filesystem scan using Trivy.
+* Builds the Docker image.
+* Scans the image for HIGH and CRITICAL vulnerabilities.
+* Pushes the image to Docker Hub.
+* Supports multi-architecture image builds (AMD64 and ARM64).
+
+---
+
+## 3. Container Vulnerability Scanning
+
+Integrated Trivy into the pipeline to scan:
+
+* Dockerfiles
+* Source code
+* Container images
+
+You also tested a **pipeline failure** by using an older `nginx:1.19-alpine` base image containing known vulnerabilities. Setting:
+
+```yaml
+exit-code: '1'
+```
+
+caused the GitHub Actions workflow to fail when HIGH or CRITICAL vulnerabilities were detected, demonstrating a security gate that blocks insecure deployments.
+
+---
+
+## 4. Kubernetes Deployment
+
+Deployed the application to a Minikube cluster with:
+
+* Deployment
+* Service
+* NGINX Ingress
+* Custom domain (`secure-resume.local`)
+
+---
+
+## 5. Runtime Security with Falco
+
+Installed Falco using Helm.
+
+Falco runs as a **DaemonSet**, meaning it monitors runtime activity on every Kubernetes node without requiring application changes.
+
+---
+
+## 6. Runtime Threat Detection
+
+Generated a runtime security event by executing:
+
+```bash
+kubectl exec -it <pod> -- sh
+```
+
+Falco immediately detected the action and produced an alert similar to:
+
+```text
+Notice: A shell was spawned in a container with an attached terminal
+```
+
+The alert included:
+
+* User ID
+* Executed process
+* Container image
+* Pod name
+* Namespace
+
+This demonstrated runtime detection of interactive shell access inside a container.
+
+---
+
+## 7. Falcosidekick
+
+Enhanced Falco by enabling **Falcosidekick**, which receives Falco events and exposes them for integration with monitoring and notification systems.
+
+Your cluster now includes:
+
+* Falco
+* Falcosidekick
+
+---
+
+## 8. Monitoring Stack
+
+Installed the **kube-prometheus-stack**, which provides:
+
+* Prometheus
+* Grafana
+* Alertmanager
+
+This lays the foundation for visualizing and monitoring runtime security events.
+
+---
+
+## 9. Current Status
+
+Your environment currently looks like this:
+
+```text
+GitHub
+   │
+   ▼
+GitHub Actions
+   │
+   ├── Trivy Filesystem Scan
+   ├── Docker Build
+   ├── Trivy Image Scan
+   └── Push to Docker Hub
+            │
+            ▼
+      Kubernetes (Minikube)
+            │
+      ┌─────┴─────┐
+      ▼           ▼
+ Resume App     Falco
+                   │
+                   ▼
+            Falcosidekick
+                   │
+          (Ready for Prometheus)
+                   │
+                   ▼
+             Prometheus
+                   │
+                   ▼
+               Grafana
+```
+
+---
+
+## 10. Next Steps
+
+The remaining task is to connect **Falcosidekick** to **Prometheus** by creating (or enabling via Helm) a **ServiceMonitor**. Once Prometheus scrapes Falcosidekick's `/metrics` endpoint, you can import a Grafana dashboard and visualize:
+
+* Total Falco alerts
+* Alerts by severity
+* Alerts by namespace
+* Alerts by pod
+* Alerts over time
+* Top triggered rules
+
+This will complete the end-to-end runtime security monitoring workflow.
+
+---
+
+### Skills Demonstrated
+
+By completing this project, you've covered several key DevSecOps capabilities:
+
+* Docker containerization
+* Secure container configuration (non-root user)
+* GitHub Actions CI/CD
+* Multi-architecture image builds
+* Trivy vulnerability scanning
+* Pipeline security gates
+* Kubernetes deployments
+* NGINX Ingress
+* Runtime security with Falco
+* Runtime event detection
+* Security monitoring with Prometheus and Grafana (in progress)
+
+This is a strong portfolio project because it demonstrates security across the **entire software delivery lifecycle**—from code and container image scanning during CI/CD to runtime threat detection and observability in Kubernetes.
+
