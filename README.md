@@ -1,272 +1,172 @@
-Multi-Architecture Builds: You compiled a container image that runs on Apple Silicon (ARM64) while remaining compatible with standard cloud servers.
+# DevSecOps Kubernetes Pipeline
 
-Secure Deployments: You deployed pods with restricted privileges (dropping capabilities, running as non-root) using DevSecOps best practices.
-
-Advanced Traffic Routing: Instead of relying on basic port-forwarding, you configured an NGINX Ingress Controller to manage external access.
-
-Custom DNS: You modified your local machine's hosts file to resolve a custom domain directly to your isolated cluster.
-
-
-
-Isssues Faced 
-
-
-Here is the documentation of the two sequential `ErrImagePull` / `ImagePullBackOff` issues you encountered, along with their root causes and resolutions. You can use this for your project notes or runbook.
-
-### Issue 1: TLS Certificate Verification Failure
-
-**The Error Log:**
-
-> `Failed to pull image "a05shwin11/devsecops_html:v1.0": Error response from daemon: Get "https://registry-1.docker.io/v2/": tls: failed to verify certificate: x509: certificate signed by unknown authority`
-
-**The Root Cause:**
-Minikube was unable to securely connect to Docker Hub to download your image. This happens when working on a corporate network or while connected to a VPN/Proxy (like Zscaler or Cisco AnyConnect). These security tools intercept web traffic and inject their own custom SSL certificates. While your Mac's host operating system trusts these corporate certificates, the isolated Minikube virtual machine does not, causing it to reject the connection as unsafe.
-
-**The Resolutions:**
-
-* **Bypass the network (Recommended for local dev):** Load the locally built Docker image directly into Minikube's cache using `minikube image load a05shwin11/devsecops_html:v1.0`, bypassing the need to download it from the internet entirely.
-* **Trust the certificates:** Restart Minikube using the `--embed-certs` flag to force the Minikube VM to inherit your Mac's trusted corporate certificates.
-* **Drop the VPN:** Temporarily disconnect from the VPN until the image is successfully pulled and cached by Kubernetes.
+An end-to-end secure CI/CD pipeline that integrates vulnerability scanning, GitOps deployment, and runtime threat detection — security built into every stage, not bolted on at the end.
 
 ---
 
-### Issue 2: Architecture Mismatch (Apple Silicon vs. Intel)
+## Overview
 
-**The Error Log:**
+This project deploys a containerised web application to a local Kubernetes cluster using a fully automated pipeline. Every `git push` triggers a chain that builds, scans, publishes, and deploys — with Falco watching every container action at runtime and Grafana surfacing the results.
 
-> `Failed to pull image "a05shwin11/devsecops_html:v1.0": no matching manifest for linux/arm64/v8 in the manifest list entries`
+```
+Developer (git push)
+    │
+    ▼
+GitHub Repository          source code + Kubernetes manifests
+    │
+    ▼
+GitHub Actions CI/CD
+    ├── Docker build        ARM64 + AMD64 multi-arch
+    ├── Trivy scan          block on HIGH / CRITICAL CVEs
+    ├── Push to Docker Hub  versioned image tag
+    └── Update manifest     deployment.yaml image tag
+                │
+                ▼
+           Argo CD           watches Git → syncs cluster automatically
+                │
+                ▼
+    Kubernetes (Minikube)
+                │
+    ┌───────────┼──────────────┐
+    │           │              │
+    ▼           ▼              ▼
+Resume app   Falco         Prometheus
+               │                │
+               ▼                ▼
+         Falcosidekick       Grafana
+```
 
-**The Root Cause:**
-Once the network issue was resolved, Docker Hub rejected the pull request because the requested architecture did not exist. Your Mac uses an M-series Apple Silicon chip, which requires the **`arm64`** architecture. However, the image originally pushed to Docker Hub was built for standard Intel/AMD machines (**`amd64`**). When Kubernetes asked Docker Hub for the `arm64` version of your container, Docker Hub returned a "not found" error.
+---
 
-**The Resolution:**
-You utilized Docker Buildx to compile a multi-architecture image. This ensured the container could run natively on your local Mac (`arm64`) while maintaining compatibility with standard cloud infrastructure (`amd64`).
+## Stack
 
-The command used to resolve this was:
+| Layer | Tool | Purpose |
+|---|---|---|
+| Source control | GitHub | Code + manifest repository |
+| CI/CD | GitHub Actions | Build, scan, push, deploy automation |
+| Container build | Docker | Multi-arch image (ARM64/AMD64) |
+| Vulnerability scan | Trivy | Block HIGH/CRITICAL CVEs before push |
+| Image registry | Docker Hub | Versioned image storage |
+| GitOps | Argo CD | Declarative cluster sync from Git |
+| Orchestration | Kubernetes (Minikube) | Local cluster with NGINX Ingress |
+| Runtime security | Falco + Falcosidekick | Kernel-level container threat detection |
+| Metrics | Prometheus | Falco alert scraping and storage |
+| Visualisation | Grafana | Alert dashboards by severity, rule, pod |
 
+---
+
+## Security Design
+
+### Shift left — scan before it ships
+Trivy runs against the Docker image inside GitHub Actions. Any HIGH or CRITICAL CVE fails the pipeline. Nothing reaches Docker Hub unless it's clean.
+
+### Least privilege containers
+All containers run as non-root with default Linux capabilities dropped via Pod Security Contexts. If a container is compromised, the attacker's reach within the host is minimal.
+
+### Immutable infrastructure via GitOps
+No one SSHes into a server to make changes. Every deployment is a Git commit. Argo CD reconciles the cluster against the repository continuously — no configuration drift, no snowflakes.
+
+### Runtime visibility with Falco
+Falco runs as a DaemonSet and watches container behaviour at the kernel syscall level. It fires structured alerts when rules match — unexpected shell spawns, API server contact, anomalous file writes. Falcosidekick routes those alerts to Prometheus; Grafana makes them visible.
+
+---
+
+## Falco Rules Tested
+
+| Rule | Trigger | Severity |
+|---|---|---|
+| Terminal shell in container | `kubectl exec` into a running pod | Notice |
+| Run shell untrusted | Process spawned a shell outside expected startup paths | Notice |
+| Contact K8s API server | Pod attempted to reach the cluster control plane | Notice |
+
+---
+
+## Project Status
+
+| Component | Status |
+|---|---|
+| Resume website — static HTML/CSS via NGINX | ✅ Complete |
+| Docker — multi-arch, non-root, Docker Hub push | ✅ Complete |
+| GitHub Actions CI — build, scan, push, tag | ✅ Complete |
+| Trivy — image and IaC vulnerability scanning | ✅ Complete |
+| Kubernetes — Minikube cluster, NGINX Ingress | ✅ Complete |
+| Argo CD / GitOps — synced, auto-deploy on push | ✅ Complete |
+| Falco — runtime container threat detection | ✅ Complete |
+| Prometheus — metrics scraping, ServiceMonitor | ✅ Complete |
+| Grafana — severity, rules, namespace, pod panels | ✅ Complete |
+| Manifest auto-update — Actions commits new image tag | 🔄 In progress |
+| GitHub Pages — public portfolio hosting | 📋 Planned |
+| Automation scripts — install.sh, start.sh, port-forward.sh | 📋 Planned |
+
+---
+
+## Local Setup
+
+> Prerequisites: Docker, Minikube, kubectl, Helm, Argo CD CLI
+
+**1. Start the cluster**
 ```bash
-docker buildx build --platform linux/amd64,linux/arm64 -t a05shwin11/devsecops_html:v2.0 --push .
-
+minikube start --driver=docker
+minikube addons enable ingress
 ```
 
-After pushing the updated `v2.0` image, the `deployment.yaml` was updated to pull the new tag, allowing the pods to transition successfully into a `Running` state.
-
-### Issue 3: Ingress Traffic Dropped (The Mac Networking Quirk)
-
-**The Symptom:**
-After successfully deploying the NGINX Ingress controller and mapping `secure-resume.local` to the Minikube IP in the Mac's `/etc/hosts` file, the URL remained completely unreachable. A `curl -I http://secure-resume.local` command returned absolutely no output, indicating the request was being dropped before it even reached the Kubernetes cluster.
-
-**The Root Cause:**
-Because Minikube runs inside an isolated virtual machine (or Docker container) on macOS, its internal IP addresses (e.g., `192.168.49.2`) are strictly internal and unroutable from the Mac's host browser. When the `minikube tunnel` command is executed on a Mac, it bridges this gap by binding the cluster's Ingress directly to the Mac's local loopback address (`127.0.0.1`). Because the `/etc/hosts` file was originally pointing to the unroutable `192.168.x.x` IP, the Mac was sending the web traffic into a network black hole.
-
-**The Resolution:**
-
-1. Modified the Mac's local DNS resolution by editing `sudo nano /etc/hosts` to point the custom domain directly to localhost: `127.0.0.1 secure-resume.local`.
-2. Restarted the `minikube tunnel` process.
-3. Granted macOS administrator privileges to allow the tunnel to securely bind to the privileged HTTP port `80`.
-
----
-
-### How Your Traffic Flows in Kubernetes
-
-To understand exactly what happens when you type `http://secure-resume.local` into your browser, it helps to visualize the journey your web request takes through the Kubernetes architecture.
-
-Here is the step-by-step traffic flow for your current setup:
-
-**1. The Browser & Local DNS (The Starting Line)**
-You type `http://secure-resume.local` into Chrome/Safari. Your browser asks your Mac, "Where is this?" Your Mac checks its `/etc/hosts` file, sees the entry you added, and translates that domain into the IP address `127.0.0.1` (localhost) on port `80`.
-
-**2. Minikube Tunnel (The Bridge)**
-Your request hits port `80` on your Mac. Normally, nothing is listening there. But because `minikube tunnel` is running in the background, it intercepts this request. It acts as a secure bridge, carrying your HTTP request across the boundary from your macOS host machine directly into the isolated Minikube virtual network.
-
-**3. The Ingress Controller (The Traffic Cop)**
-The tunnel hands the request directly to the **NGINX Ingress Controller** running inside Kubernetes. The Ingress reads the HTTP header of your request and sees `Host: secure-resume.local`. It checks its routing rules (the `ingress.yaml` file you applied) and finds a match: *"Ah, traffic for secure-resume.local goes to the `resume-service`!"*
-
-**4. The Service (The Internal Load Balancer)**
-The Ingress forwards the traffic to your **Service** (`resume-service`). The Service doesn't actually process the web page itself; it is an internal load balancer. It keeps a real-time list of all healthy, running Pods that have the label `app: secure-resume`. If you have 2 replicas running, the Service picks one and forwards the traffic to it.
-
-**5. The Pod & Container (The Destination)**
-The traffic finally arrives at one of your **Pods** (e.g., `resume-deployment-5c9fc778c8-2wfvq`). Inside that Pod, your ARM64-compatible Docker container is running an NGINX or Apache web server on port `80`. The container serves up your HTML resume files and sends them all the way back down the chain to your browser.
-
-Here's a concise summary of everything you've accomplished in your **DevSecOps project**, including today's Falco work.
-
----
-
-# DevSecOps Project Summary
-
-## 1. Containerized Application
-
-* Built a static HTML/CSS portfolio website.
-* Created a Docker image using NGINX.
-* Followed container security best practices by running the application as a **non-root user**.
-
----
-
-## 2. CI/CD Pipeline with GitHub Actions
-
-Implemented an automated pipeline that:
-
-* Checks out the source code.
-* Performs an Infrastructure-as-Code (IaC) and filesystem scan using Trivy.
-* Builds the Docker image.
-* Scans the image for HIGH and CRITICAL vulnerabilities.
-* Pushes the image to Docker Hub.
-* Supports multi-architecture image builds (AMD64 and ARM64).
-
----
-
-## 3. Container Vulnerability Scanning
-
-Integrated Trivy into the pipeline to scan:
-
-* Dockerfiles
-* Source code
-* Container images
-
-You also tested a **pipeline failure** by using an older `nginx:1.19-alpine` base image containing known vulnerabilities. Setting:
-
-```yaml
-exit-code: '1'
-```
-
-caused the GitHub Actions workflow to fail when HIGH or CRITICAL vulnerabilities were detected, demonstrating a security gate that blocks insecure deployments.
-
----
-
-## 4. Kubernetes Deployment
-
-Deployed the application to a Minikube cluster with:
-
-* Deployment
-* Service
-* NGINX Ingress
-* Custom domain (`secure-resume.local`)
-
----
-
-## 5. Runtime Security with Falco
-
-Installed Falco using Helm.
-
-Falco runs as a **DaemonSet**, meaning it monitors runtime activity on every Kubernetes node without requiring application changes.
-
----
-
-## 6. Runtime Threat Detection
-
-Generated a runtime security event by executing:
-
+**2. Install Argo CD**
 ```bash
-kubectl exec -it <pod> -- sh
+kubectl create namespace argocd
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 ```
 
-Falco immediately detected the action and produced an alert similar to:
-
-```text
-Notice: A shell was spawned in a container with an attached terminal
+**3. Deploy the application via Argo CD**
+```bash
+argocd app create resume \
+  --repo https://github.com/<your-repo> \
+  --path k8s \
+  --dest-server https://kubernetes.default.svc \
+  --dest-namespace default \
+  --sync-policy automated
 ```
 
-The alert included:
+**4. Install Falco**
+```bash
+helm repo add falcosecurity https://falcosecurity.github.io/charts
+helm install falco falcosecurity/falco \
+  --set falcosidekick.enabled=true \
+  --set falcosidekick.config.prometheusexporter.enabled=true
+```
 
-* User ID
-* Executed process
-* Container image
-* Pod name
-* Namespace
+**5. Install Prometheus + Grafana**
+```bash
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm install kube-prometheus prometheus-community/kube-prometheus-stack
+```
 
-This demonstrated runtime detection of interactive shell access inside a container.
-
----
-
-## 7. Falcosidekick
-
-Enhanced Falco by enabling **Falcosidekick**, which receives Falco events and exposes them for integration with monitoring and notification systems.
-
-Your cluster now includes:
-
-* Falco
-* Falcosidekick
-
----
-
-## 8. Monitoring Stack
-
-Installed the **kube-prometheus-stack**, which provides:
-
-* Prometheus
-* Grafana
-* Alertmanager
-
-This lays the foundation for visualizing and monitoring runtime security events.
-
----
-
-## 9. Current Status
-
-Your environment currently looks like this:
-
-```text
-GitHub
-   │
-   ▼
-GitHub Actions
-   │
-   ├── Trivy Filesystem Scan
-   ├── Docker Build
-   ├── Trivy Image Scan
-   └── Push to Docker Hub
-            │
-            ▼
-      Kubernetes (Minikube)
-            │
-      ┌─────┴─────┐
-      ▼           ▼
- Resume App     Falco
-                   │
-                   ▼
-            Falcosidekick
-                   │
-          (Ready for Prometheus)
-                   │
-                   ▼
-             Prometheus
-                   │
-                   ▼
-               Grafana
+**6. Access the app**
+```bash
+minikube tunnel
+# then visit http://resume.local (add to /etc/hosts if needed)
 ```
 
 ---
 
-## 10. Next Steps
+## CI/CD Pipeline (GitHub Actions)
 
-The remaining task is to connect **Falcosidekick** to **Prometheus** by creating (or enabling via Helm) a **ServiceMonitor**. Once Prometheus scrapes Falcosidekick's `/metrics` endpoint, you can import a Grafana dashboard and visualize:
+On every push to `main`:
 
-* Total Falco alerts
-* Alerts by severity
-* Alerts by namespace
-* Alerts by pod
-* Alerts over time
-* Top triggered rules
+1. **Build** — multi-arch Docker image for `linux/amd64` and `linux/arm64`
+2. **Scan** — Trivy scans the image; pipeline fails on HIGH or CRITICAL findings
+3. **Push** — tagged image pushed to Docker Hub using repository secrets
+4. **Deploy** — Argo CD detects the new manifest tag and syncs the cluster automatically
 
-This will complete the end-to-end runtime security monitoring workflow.
+Secrets required in GitHub repository settings:
+
+| Secret | Value |
+|---|---|
+| `DOCKER_USERNAME` | Docker Hub username |
+| `DOCKER_PASSWORD` | Docker Hub access token |
 
 ---
 
-### Skills Demonstrated
+## Author
 
-By completing this project, you've covered several key DevSecOps capabilities:
-
-* Docker containerization
-* Secure container configuration (non-root user)
-* GitHub Actions CI/CD
-* Multi-architecture image builds
-* Trivy vulnerability scanning
-* Pipeline security gates
-* Kubernetes deployments
-* NGINX Ingress
-* Runtime security with Falco
-* Runtime event detection
-* Security monitoring with Prometheus and Grafana (in progress)
-
-This is a strong portfolio project because it demonstrates security across the **entire software delivery lifecycle**—from code and container image scanning during CI/CD to runtime threat detection and observability in Kubernetes.
-
+**Ashwin Yadav** — Senior Cybersecurity Engineer  
+[linkedin.com/in/ashwinyadav11](https://linkedin.com/in/ashwinyadav11) · ashwin09yadav@gmail.com
