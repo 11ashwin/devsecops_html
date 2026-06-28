@@ -24,7 +24,7 @@ jobs:
 
       # Build a local, temporary image to scan before pushing
       - name: Build local image for scanning
-        run: docker build -t temp-scan-image:latest .
+        run: docker build -t temp-scan-image:latest ./app
 
       # SECURITY GATE 2: Scan the container image for CVEs
       - name: Run Trivy Image Scan

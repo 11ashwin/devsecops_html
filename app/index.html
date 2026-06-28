@@ -9,7 +9,6 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
       --bg:           #090c10;
       --surface:      #0d1117;
@@ -27,544 +26,129 @@
       --success:      #3fb950;
       --success-dim:  rgba(63,185,80,0.1);
       --warning:      #d29922;
-      --mono:         'JetBrains Mono', 'Fira Code', monospace;
+      --mono:         'JetBrains Mono', monospace;
       --sans:         'Inter', system-ui, sans-serif;
-      --r-sm: 5px;
-      --r-md: 9px;
-      --r-lg: 12px;
+      --r-sm: 5px; --r-md: 9px; --r-lg: 12px;
     }
-
     html { scroll-behavior: smooth; }
-
-    body {
-      font-family: var(--sans);
-      background: var(--bg);
-      color: var(--text);
-      font-size: 14.5px;
-      line-height: 1.65;
-      min-height: 100vh;
-    }
-
+    body { font-family: var(--sans); background: var(--bg); color: var(--text); font-size: 14.5px; line-height: 1.65; min-height: 100vh; }
     a { color: var(--accent); text-decoration: none; }
     a:hover { text-decoration: underline; }
     ul { list-style: none; padding: 0; }
-
-    /* ── Scanline texture ── */
     body::before {
       content: '';
-      position: fixed;
-      inset: 0;
-      background-image: repeating-linear-gradient(
-        0deg, transparent, transparent 2px,
-        rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px
-      );
-      pointer-events: none;
-      z-index: 0;
+      position: fixed; inset: 0;
+      background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+      pointer-events: none; z-index: 0;
     }
+    .page-wrap { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; padding: 0 24px 100px; }
 
-    .page-wrap {
-      position: relative;
-      z-index: 1;
-      max-width: 860px;
-      margin: 0 auto;
-      padding: 0 24px 100px;
-    }
-
-    /* ── Header ── */
-    header {
-      padding: 52px 0 0;
-      margin-bottom: 0;
-    }
-
-    .header-eyebrow {
-      font-family: var(--mono);
-      font-size: 11px;
-      color: var(--accent);
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      margin-bottom: 14px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .header-eyebrow::before {
-      content: '';
-      display: inline-block;
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--success);
-      box-shadow: 0 0 8px var(--success);
-    }
-
-    .header-top {
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      gap: 20px;
-      flex-wrap: wrap;
-      margin-bottom: 20px;
-    }
-
-    .header-left h1 {
-      font-size: 32px;
-      font-weight: 600;
-      color: #e6edf3;
-      letter-spacing: -0.5px;
-      line-height: 1.15;
-      margin-bottom: 6px;
-    }
-
-    .header-left .role {
-      font-family: var(--mono);
-      font-size: 12.5px;
-      color: var(--muted);
-    }
-
-    .availability {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-family: var(--mono);
-      font-size: 11px;
-      font-weight: 500;
-      color: var(--success);
-      background: var(--success-dim);
-      border: 1px solid rgba(63,185,80,0.2);
-      padding: 6px 14px;
-      border-radius: 100px;
-      white-space: nowrap;
-    }
-
-    .availability::before {
-      content: '';
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--success);
-      animation: pulse 2s ease infinite;
-    }
-
-    @keyframes pulse {
-      0%,100% { opacity: 1; }
-      50%      { opacity: 0.3; }
-    }
-
-    .contact-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px 18px;
-      font-family: var(--mono);
-      font-size: 11.5px;
-      color: var(--muted);
-      padding: 20px 0;
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-      margin-top: 20px;
-    }
-
+    /* HEADER */
+    header { padding: 52px 0 0; }
+    .header-eyebrow { font-family: var(--mono); font-size: 11px; color: var(--accent); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+    .header-eyebrow::before { content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--success); box-shadow: 0 0 8px var(--success); }
+    .header-top { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; flex-wrap: wrap; margin-bottom: 20px; }
+    .header-left h1 { font-size: 32px; font-weight: 600; color: #e6edf3; letter-spacing: -0.5px; line-height: 1.15; margin-bottom: 6px; }
+    .header-left .role { font-family: var(--mono); font-size: 12.5px; color: var(--muted); }
+    .availability { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 11px; font-weight: 500; color: var(--success); background: var(--success-dim); border: 1px solid rgba(63,185,80,0.2); padding: 6px 14px; border-radius: 100px; white-space: nowrap; }
+    .availability::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--success); animation: pulse 2s ease infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+    .contact-row { display: flex; flex-wrap: wrap; gap: 6px 18px; font-family: var(--mono); font-size: 11.5px; color: var(--muted); padding: 20px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); margin-top: 20px; }
     .contact-row a { color: var(--muted); }
     .contact-row a:hover { color: var(--accent); text-decoration: none; }
+    .ci { display: flex; align-items: center; gap: 7px; }
+    .ci svg { width: 13px; height: 13px; opacity: 0.5; flex-shrink: 0; }
 
-    .ci {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-    }
-
-    .ci svg {
-      width: 13px;
-      height: 13px;
-      opacity: 0.5;
-      flex-shrink: 0;
-    }
-
-    /* ── Tab nav ── */
-    .tab-nav {
-      display: flex;
-      gap: 0;
-      border-bottom: 1px solid var(--border);
-      margin: 0 0 36px;
-      overflow-x: auto;
-      scrollbar-width: none;
-    }
-
+    /* TABS */
+    .tab-nav { display: flex; gap: 0; border-bottom: 1px solid var(--border); margin: 0 0 36px; overflow-x: auto; scrollbar-width: none; }
     .tab-nav::-webkit-scrollbar { display: none; }
-
-    .tab-btn {
-      background: none;
-      border: none;
-      border-bottom: 2px solid transparent;
-      padding: 16px 20px;
-      font-size: 13px;
-      font-family: var(--sans);
-      font-weight: 400;
-      color: var(--muted);
-      cursor: pointer;
-      white-space: nowrap;
-      transition: color 0.15s, border-color 0.15s;
-      margin-bottom: -1px;
-      letter-spacing: 0.01em;
-    }
-
+    .tab-btn { background: none; border: none; border-bottom: 2px solid transparent; padding: 16px 20px; font-size: 13px; font-family: var(--sans); font-weight: 400; color: var(--muted); cursor: pointer; white-space: nowrap; transition: color 0.15s, border-color 0.15s; margin-bottom: -1px; letter-spacing: 0.01em; }
     .tab-btn:hover { color: var(--text); }
-    .tab-btn.active {
-      color: #e6edf3;
-      font-weight: 500;
-      border-bottom-color: var(--accent);
-    }
-
-    /* ── Tab panels ── */
+    .tab-btn.active { color: #e6edf3; font-weight: 500; border-bottom-color: var(--accent); }
     .tab-panel { display: none; }
-    .tab-panel.active {
-      display: block;
-      animation: fadein 0.2s ease;
-    }
+    .tab-panel.active { display: block; animation: fadein 0.2s ease; }
+    @keyframes fadein { from{opacity:0;transform:translateY(5px)} to{opacity:1;transform:translateY(0)} }
 
-    @keyframes fadein {
-      from { opacity: 0; transform: translateY(5px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
+    /* SECTION LABEL */
+    .sec-label { font-family: var(--mono); font-size: 10.5px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.12em; color: var(--faint); margin-bottom: 14px; }
 
-    /* ── Section label ── */
-    .sec-label {
-      font-family: var(--mono);
-      font-size: 10.5px;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--faint);
-      margin-bottom: 14px;
-    }
+    /* SUMMARY */
+    .summary-card { background: linear-gradient(135deg, var(--surface-2) 0%, var(--surface) 100%); border: 1px solid var(--border); border-left: 2px solid var(--accent); border-radius: var(--r-lg); padding: 20px 22px; margin-bottom: 32px; font-size: 13.5px; color: var(--muted); line-height: 1.8; }
 
-    /* ── Summary ── */
-    .summary-card {
-      background: linear-gradient(135deg, var(--surface-2) 0%, var(--surface) 100%);
-      border: 1px solid var(--border);
-      border-left: 2px solid var(--accent);
-      border-radius: var(--r-lg);
-      padding: 20px 22px;
-      margin-bottom: 32px;
-      font-size: 13.5px;
-      color: var(--muted);
-      line-height: 1.8;
-    }
-
-    /* ── Stat grid ── */
-    .stat-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 10px;
-      margin-bottom: 36px;
-    }
-
-    .stat-card {
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      border-radius: var(--r-lg);
-      padding: 18px 18px 16px;
-      transition: border-color 0.15s, background 0.15s;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .stat-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--accent-dim), transparent);
-    }
-
-    .stat-card:hover {
-      border-color: var(--border-accent);
-      background: var(--surface-3);
-    }
-
-    .stat-num {
-      font-family: var(--mono);
-      font-size: 26px;
-      font-weight: 500;
-      color: var(--accent);
-      letter-spacing: -0.5px;
-      line-height: 1;
-      margin-bottom: 8px;
-    }
-
-    .stat-desc {
-      font-size: 12px;
-      color: var(--muted);
-      line-height: 1.5;
-    }
-
-    /* ── Skill grid ── */
-    .skill-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(185px, 1fr));
-      gap: 8px;
-      margin-bottom: 36px;
-    }
-
-    .skill-card {
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      border-radius: var(--r-md);
-      padding: 15px 16px;
-      transition: border-color 0.15s;
-    }
-
-    .skill-card:hover { border-color: var(--border-hover); }
-
-    .skill-title {
-      font-family: var(--mono);
-      font-size: 10px;
-      font-weight: 500;
-      color: var(--accent);
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      margin-bottom: 8px;
-    }
-
-    .skill-card p {
-      font-size: 12.5px;
-      color: var(--muted);
-      line-height: 1.65;
-    }
-
-    /* ── Project cards ── */
-    .project-card {
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      border-radius: var(--r-lg);
-      padding: 20px 22px;
-      margin-bottom: 10px;
-      transition: border-color 0.15s;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .project-card::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: var(--r-lg);
-      background: radial-gradient(ellipse at top left, var(--accent-glow), transparent 60%);
-      pointer-events: none;
-    }
-
+    /* PROJECT CARDS */
+    .project-card { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 20px 22px; margin-bottom: 10px; transition: border-color 0.15s; position: relative; overflow: hidden; }
+    .project-card::after { content: ''; position: absolute; inset: 0; border-radius: var(--r-lg); background: radial-gradient(ellipse at top left, var(--accent-glow), transparent 60%); pointer-events: none; }
     .project-card:hover { border-color: var(--border-accent); }
-
-    .project-header {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 4px;
-      flex-wrap: wrap;
-    }
-
-    .project-name {
-      font-size: 14px;
-      font-weight: 600;
-      color: #e6edf3;
-    }
-
-    .project-tag {
-      font-family: var(--mono);
-      font-size: 10px;
-      font-weight: 500;
-      padding: 3px 9px;
-      border-radius: 100px;
-      white-space: nowrap;
-    }
-
-    .tag-blue {
-      color: var(--accent);
-      background: var(--accent-dim);
-      border: 1px solid rgba(88,166,255,0.2);
-    }
-
-    .tag-green {
-      color: var(--success);
-      background: var(--success-dim);
-      border: 1px solid rgba(63,185,80,0.2);
-    }
-
-    .tag-amber {
-      color: var(--warning);
-      background: rgba(210,153,34,0.1);
-      border: 1px solid rgba(210,153,34,0.2);
-    }
-
-    .project-meta {
-      font-family: var(--mono);
-      font-size: 11px;
-      color: var(--faint);
-      margin-bottom: 14px;
-    }
-
-    .project-bullets {
-      padding-left: 16px;
-      list-style: disc;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .project-bullets li {
-      font-size: 13px;
-      color: var(--muted);
-      line-height: 1.65;
-      list-style: disc;
-    }
-
+    .project-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 4px; flex-wrap: wrap; }
+    .project-name { font-size: 14px; font-weight: 600; color: #e6edf3; }
+    .project-tag { font-family: var(--mono); font-size: 10px; font-weight: 500; padding: 3px 9px; border-radius: 100px; white-space: nowrap; }
+    .tag-blue { color: var(--accent); background: var(--accent-dim); border: 1px solid rgba(88,166,255,0.2); }
+    .tag-amber { color: var(--warning); background: rgba(210,153,34,0.1); border: 1px solid rgba(210,153,34,0.2); }
+    .project-meta { font-family: var(--mono); font-size: 11px; color: var(--faint); margin-bottom: 14px; }
+    .project-bullets { padding-left: 16px; list-style: disc; display: flex; flex-direction: column; gap: 6px; }
+    .project-bullets li { font-size: 13px; color: var(--muted); line-height: 1.65; list-style: disc; }
     .project-bullets li::marker { color: var(--faint); }
 
-    /* ── Job entries ── */
-    .job-list { display: flex; flex-direction: column; }
+    /* PROJECT STATUS TABLE */
+    .status-table { width: 100%; border-collapse: collapse; margin-bottom: 32px; font-size: 13px; }
+    .status-table thead tr { border-bottom: 1px solid var(--border); }
+    .status-table thead th { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--faint); padding: 8px 12px; text-align: left; font-weight: 500; }
+    .status-table tbody tr { border-bottom: 1px solid var(--border); transition: background 0.12s; }
+    .status-table tbody tr:hover { background: rgba(255,255,255,0.02); }
+    .status-table td { padding: 10px 12px; color: var(--muted); vertical-align: middle; }
+    .status-table td:first-child { color: var(--text); font-weight: 500; }
+    .badge { display: inline-flex; align-items: center; gap: 5px; font-family: var(--mono); font-size: 10px; padding: 3px 9px; border-radius: 100px; white-space: nowrap; }
+    .badge-green { color: var(--success); background: var(--success-dim); border: 1px solid rgba(63,185,80,0.2); }
+    .badge-green::before { content:''; width:5px; height:5px; border-radius:50%; background:var(--success); }
+    .badge-amber { color: var(--warning); background: rgba(210,153,34,0.1); border: 1px solid rgba(210,153,34,0.2); }
+    .badge-amber::before { content:''; width:5px; height:5px; border-radius:50%; background:var(--warning); }
 
-    .job {
-      padding: 26px 0;
-      border-bottom: 1px solid var(--border);
-    }
+    /* STAT GRID */
+    .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin-bottom: 36px; }
+    .stat-card { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 18px 18px 16px; transition: border-color 0.15s, background 0.15s; position: relative; overflow: hidden; }
+    .stat-card::before { content:''; position:absolute; top:0;left:0;right:0; height:1px; background: linear-gradient(90deg, transparent, var(--accent-dim), transparent); }
+    .stat-card:hover { border-color: var(--border-accent); background: var(--surface-3); }
+    .stat-num { font-family: var(--mono); font-size: 26px; font-weight: 500; color: var(--accent); letter-spacing: -0.5px; line-height: 1; margin-bottom: 8px; }
+    .stat-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
 
-    .job:last-child { border-bottom: none; }
+    /* SKILL GRID */
+    .skill-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(185px, 1fr)); gap: 8px; margin-bottom: 36px; }
+    .skill-card { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--r-md); padding: 15px 16px; transition: border-color 0.15s; }
+    .skill-card:hover { border-color: var(--border-hover); }
+    .skill-title { font-family: var(--mono); font-size: 10px; font-weight: 500; color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; }
+    .skill-card p { font-size: 12.5px; color: var(--muted); line-height: 1.65; }
 
-    .job-meta {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 6px;
-      margin-bottom: 3px;
-    }
+    /* UTILS */
+    .mb-8{margin-bottom:8px} .mb-14{margin-bottom:14px} .mb-28{margin-bottom:28px} .mt-36{margin-top:36px}
 
-    .job-title-wrap { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-
-    .job-title {
-      font-size: 14.5px;
-      font-weight: 600;
-      color: #e6edf3;
-    }
-
-    .current-tag {
-      font-family: var(--mono);
-      font-size: 10px;
-      font-weight: 500;
-      color: var(--success);
-      background: var(--success-dim);
-      border: 1px solid rgba(63,185,80,0.2);
-      padding: 2px 9px;
-      border-radius: 100px;
-    }
-
-    .job-date {
-      font-family: var(--mono);
-      font-size: 11.5px;
-      color: var(--faint);
-      white-space: nowrap;
-    }
-
-    .job-company {
-      font-size: 12.5px;
-      color: var(--muted);
-      margin-bottom: 14px;
-    }
-
-    .job-bullets {
-      padding-left: 16px;
-      list-style: disc;
-      display: flex;
-      flex-direction: column;
-      gap: 7px;
-    }
-
-    .job-bullets li {
-      font-size: 13px;
-      color: var(--muted);
-      line-height: 1.65;
-      list-style: disc;
-    }
-
-    .job-bullets li::marker { color: var(--faint); }
-
-    /* ── Edu / certs ── */
-    .edu-block {
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      border-radius: var(--r-lg);
-      padding: 20px 22px;
-      margin-bottom: 28px;
-    }
-
-    .edu-degree {
-      font-size: 14.5px;
-      font-weight: 600;
-      color: #e6edf3;
-      margin-bottom: 3px;
-    }
-
-    .edu-school {
-      font-family: var(--mono);
-      font-size: 12px;
-      color: var(--muted);
-    }
-
-    .cert-list { display: flex; flex-direction: column; gap: 6px; }
-
-    .cert-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 14px 18px;
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      border-radius: var(--r-md);
-      font-size: 13px;
-      color: var(--text);
-      transition: border-color 0.15s;
-    }
-
-    .cert-item:hover { border-color: var(--border-hover); }
-
-    .cert-icon {
-      width: 30px;
-      height: 30px;
-      border-radius: var(--r-sm);
-      background: var(--accent-dim);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    .cert-icon svg {
-      width: 15px;
-      height: 15px;
-      stroke: var(--accent);
-    }
-
-    /* ── Spacing ── */
-    .mb-8  { margin-bottom: 8px; }
-    .mb-14 { margin-bottom: 14px; }
-    .mb-28 { margin-bottom: 28px; }
-    .mt-36 { margin-top: 36px; }
-
-    /* ── Responsive ── */
     @media (max-width: 600px) {
-      header { padding: 32px 0 0; }
-      .header-left h1 { font-size: 26px; }
-      .stat-num { font-size: 22px; }
-      .tab-btn { padding: 12px 14px; font-size: 12.5px; }
+      header{padding:32px 0 0} .header-left h1{font-size:26px} .stat-num{font-size:22px} .tab-btn{padding:12px 14px;font-size:12.5px}
     }
+
+    /* ── ARCHITECTURE SVG ── */
+    .arch-wrap { background:var(--surface-2); border:1px solid var(--border); border-radius:var(--r-lg); padding:20px; margin-bottom:8px; overflow-x:auto; }
+    .arch-wrap svg text { font-family:var(--mono); }
+
+    /* ── DOCS ── */
+    .doc-section { margin-bottom:28px; }
+    .doc-h2 { font-size:13.5px; font-weight:600; color:#e6edf3; margin-bottom:10px; padding-bottom:8px; border-bottom:1px solid var(--border); }
+    .doc-p  { font-size:13px; color:var(--muted); line-height:1.8; margin-bottom:10px; }
+    .doc-table { width:100%; border-collapse:collapse; font-size:12.5px; margin-bottom:10px; }
+    .doc-table th { font-family:var(--mono); font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:var(--faint); padding:7px 12px; text-align:left; border-bottom:1px solid var(--border); }
+    .doc-table td { padding:9px 12px; color:var(--muted); border-bottom:1px solid var(--border); vertical-align:top; }
+    .doc-table td:first-child { color:var(--text); font-weight:500; white-space:nowrap; }
+    .doc-table tr:last-child td { border-bottom:none; }
+    .doc-code { font-family:var(--mono); font-size:11.5px; background:var(--surface-3); border:1px solid var(--border); border-radius:var(--r-sm); padding:14px 16px; color:var(--muted); white-space:pre; overflow-x:auto; line-height:1.7; margin-bottom:10px; }
+    .doc-code .c-blue  { color:var(--accent); }
+    .doc-code .c-green { color:var(--success); }
+    .doc-code .c-amber { color:var(--warning); }
+    .doc-code .c-red   { color:#f85149; }
+    .doc-code .c-purple{ color:#a371f7; }
   </style>
 </head>
 <body>
-
 <div class="page-wrap">
 
-  <!-- HEADER -->
   <header>
     <div class="header-eyebrow">open to relocation · southeast asia &amp; apac</div>
     <div class="header-top">
@@ -574,7 +158,6 @@
       </div>
       <span class="availability">available now</span>
     </div>
-
     <div class="contact-row">
       <a class="ci" href="tel:+918291660070">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8a19.79 19.79 0 01-3.07-8.67A2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/></svg>
@@ -591,20 +174,82 @@
     </div>
   </header>
 
-  <!-- TAB NAV -->
   <nav class="tab-nav" role="tablist">
-    <button class="tab-btn active" role="tab" aria-selected="true"  onclick="switchTab('summary',this)">Overview</button>
-    <button class="tab-btn"        role="tab" aria-selected="false" onclick="switchTab('experience',this)">Experience</button>
-    <button class="tab-btn"        role="tab" aria-selected="false" onclick="switchTab('credentials',this)">Education &amp; certs</button>
+    <button class="tab-btn active" role="tab" aria-selected="true"  onclick="switchTab('overview',this)">Overview &amp; Projects</button>
+    <button class="tab-btn"        role="tab" aria-selected="false" onclick="switchTab('dashboard',this)">Security Dashboard</button>
+    <button class="tab-btn"        role="tab" aria-selected="false" onclick="switchTab('skills',this)">Metrics &amp; Skills</button>
+    <button class="tab-btn"        role="tab" aria-selected="false" onclick="switchTab('credentials',this)">Education &amp; Certs</button>
   </nav>
 
-  <!-- ══ PANEL 1 — OVERVIEW ══ -->
-  <div id="panel-summary" class="tab-panel active">
+  <!-- PANEL 1: OVERVIEW + PROJECTS -->
+  <div id="panel-overview" class="tab-panel active">
 
     <p class="sec-label mb-14">About</p>
     <div class="summary-card mb-28">
-      Cybersecurity professional with 4+ years across incident response, WAF management, EDR, cloud security, and vulnerability management. Proven track record detecting and neutralising threats using MITRE ATT&CK-aligned frameworks in financial media, data centres, and critical infrastructure. Actively building AI-augmented security tooling and DevSecOps pipelines. Seeking a senior role across Southeast Asia and the Asia-Pacific region.
+      Cybersecurity professional with 4+ years across incident response, WAF management, EDR, cloud security, and vulnerability management. Proven track record detecting and neutralising threats using MITRE ATT&amp;CK-aligned frameworks in financial media, data centres, and critical infrastructure. Actively building AI-augmented security tooling and DevSecOps pipelines. Seeking a senior role across Southeast Asia and the Asia-Pacific region.
     </div>
+
+    <p class="sec-label mb-14">Projects</p>
+
+    <div class="project-card">
+      <div class="project-header">
+        <p class="project-name">Automated secure Kubernetes deployment pipeline</p>
+        <span class="project-tag tag-blue">DevSecOps · 2026</span>
+      </div>
+      <p class="project-meta">GitHub Actions · Docker · Minikube · Argo CD · Falco · Prometheus · Grafana · Trivy</p>
+      <ul class="project-bullets">
+        <li>Engineered an end-to-end CI/CD pipeline using GitHub Actions for multi-architecture (ARM64/AMD64) Docker builds pushed securely to Docker Hub via repository secrets.</li>
+        <li>Implemented GitOps-based continuous deployment with Argo CD — watches the Git repository for manifest changes and automatically synchronises the Kubernetes cluster without manual intervention.</li>
+        <li>Deployed a highly available application to a local Kubernetes (Minikube) cluster with an NGINX Ingress Controller for traffic routing and custom local DNS mapping.</li>
+        <li>Integrated Falco runtime security with Falcosidekick alerting, Prometheus metrics scraping, and a custom Grafana dashboard for real-time security event monitoring across severity, rules, namespaces, and pods.</li>
+        <li>Hardened infrastructure by enforcing strict Pod Security Contexts — non-root execution and dropped default Linux capabilities — to mitigate container breakout risk.</li>
+        <li>Diagnosed complex deployment issues including TLS certificate validation failures, architecture mismatches, and container loopback networking anomalies.</li>
+      </ul>
+    </div>
+
+    <div class="project-card">
+      <div class="project-header">
+        <p class="project-name">PentestAGI — AI-augmented penetration testing</p>
+        <span class="project-tag tag-amber">Research · 2025–2026</span>
+      </div>
+      <p class="project-meta">Agentic AI security tooling · use-case evaluation</p>
+      <ul class="project-bullets">
+        <li>Evaluated an AI-driven autonomous penetration testing agent across multiple attack-surface use cases, assessing its ability to perform reconnaissance, vulnerability discovery, and exploitation chaining without manual guidance.</li>
+        <li>Tested agent behaviour across web application targets — validated subdomain enumeration, service fingerprinting, and automated OWASP Top 10 probe generation, benchmarking against manual methodology.</li>
+        <li>Investigated prompt-injection resistance and guardrail bypass scenarios to understand where agentic AI fails safely versus unsafely in adversarial contexts.</li>
+        <li>Documented operational limits, false-positive rates, and integration gaps to inform future red-team augmentation workflows.</li>
+      </ul>
+    </div>
+
+    <p class="sec-label mb-14 mt-36">Pipeline status</p>
+    <table class="status-table">
+      <thead>
+        <tr>
+          <th>Component</th>
+          <th>Description</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Resume website</td><td>Static HTML/CSS served via NGINX</td><td><span class="badge badge-green">Complete</span></td></tr>
+        <tr><td>Docker</td><td>Multi-arch image, non-root, Docker Hub push</td><td><span class="badge badge-green">Complete</span></td></tr>
+        <tr><td>GitHub Actions CI</td><td>Build, scan, push, tag automation</td><td><span class="badge badge-green">Complete</span></td></tr>
+        <tr><td>Trivy scanning</td><td>Image &amp; IaC vulnerability scanning</td><td><span class="badge badge-green">Complete</span></td></tr>
+        <tr><td>Kubernetes</td><td>Minikube cluster, NGINX Ingress</td><td><span class="badge badge-green">Complete</span></td></tr>
+        <tr><td>Argo CD / GitOps</td><td>Synced, healthy, auto-deploy on push</td><td><span class="badge badge-green">Complete</span></td></tr>
+        <tr><td>Falco runtime security</td><td>Container threat detection + alerting</td><td><span class="badge badge-green">Complete</span></td></tr>
+        <tr><td>Prometheus</td><td>Metrics scraping, ServiceMonitor configured</td><td><span class="badge badge-green">Complete</span></td></tr>
+        <tr><td>Grafana dashboard</td><td>Severity, rules, namespace, pod panels</td><td><span class="badge badge-green">Complete</span></td></tr>
+        <tr><td>Manifest auto-update</td><td>GitHub Actions updates deployment.yaml tag</td><td><span class="badge badge-amber">In progress</span></td></tr>
+        <tr><td>GitHub Pages</td><td>Public portfolio hosting</td><td><span class="badge badge-amber">Planned</span></td></tr>
+        <tr><td>Automation scripts</td><td>install.sh, start.sh, port-forward.sh</td><td><span class="badge badge-amber">Planned</span></td></tr>
+      </tbody>
+    </table>
+
+  </div>
+
+  <!-- PANEL 2: METRICS + SKILLS -->
+  <div id="panel-skills" class="tab-panel">
 
     <p class="sec-label mb-14">Key metrics</p>
     <div class="stat-grid mb-28">
@@ -654,157 +299,253 @@
       </div>
     </div>
 
-    <p class="sec-label mb-14">Projects</p>
+  </div>
 
-    <div class="project-card">
-      <div class="project-header">
-        <p class="project-name">Automated secure Kubernetes deployment pipeline</p>
-        <span class="project-tag tag-blue">DevSecOps · 2026</span>
-      </div>
-      <p class="project-meta">GitHub Actions · Docker Hub · Minikube · Argo CD · Falco · Falcosidekick · Prometheus · Grafana</p>
-      <ul class="project-bullets">
-        <li>Engineered an end-to-end CI/CD pipeline using GitHub Actions for multi-architecture (ARM64/AMD64) Docker builds pushed securely to Docker Hub via repository secrets.</li>
-        <li>Implemented GitOps-based continuous deployment with Argo CD — watches the Git repository for manifest changes and automatically synchronises the Kubernetes cluster without manual intervention.</li>
-        <li>Deployed a highly available application to a local Kubernetes (Minikube) cluster with an NGINX Ingress Controller for traffic routing and custom local DNS mapping.</li>
-        <li>Integrated Falco runtime security with Falcosidekick alerting, Prometheus metrics scraping, and a custom Grafana dashboard for real-time security event monitoring and PromQL-based alert panels (total alerts, severity distribution, top rules, namespace and pod breakdowns).</li>
-        <li>Hardened infrastructure by enforcing strict Pod Security Contexts—non-root execution and dropped default Linux capabilities—to mitigate container breakout risk.</li>
-        <li>Diagnosed complex deployment issues including TLS certificate validation failures, architecture mismatches, and container loopback networking anomalies.</li>
-      </ul>
+  <!-- PANEL 3: SECURITY DASHBOARD -->
+  <div id="panel-dashboard" class="tab-panel">
+
+    <!-- ARCHITECTURE DIAGRAM -->
+    <p class="sec-label mb-14">Pipeline architecture</p>
+    <div class="arch-wrap" style="margin-bottom:28px;">
+      <svg width="100%" viewBox="0 0 820 620" role="img" xmlns="http://www.w3.org/2000/svg">
+        <title>DevSecOps Kubernetes Pipeline Architecture</title>
+        <defs>
+          <marker id="arr2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+        </defs>
+        <style>
+          .ab { fill:#161b22; stroke:rgba(255,255,255,0.12); stroke-width:0.5; }
+          .ab-blue   { fill:#0d1f33; stroke:#58a6ff; stroke-width:0.8; }
+          .ab-teal   { fill:#0d1f18; stroke:#3fb950; stroke-width:0.8; }
+          .ab-amber  { fill:#1f1500; stroke:#d29922; stroke-width:0.8; }
+          .ab-red    { fill:#1f0e0d; stroke:#f85149; stroke-width:0.8; }
+          .ab-purple { fill:#130e20; stroke:#a371f7; stroke-width:0.8; }
+          .ab-green  { fill:#0b1a0e; stroke:#3fb950; stroke-width:0.8; }
+          .at  { font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:500; fill:#cdd9e5; }
+          .ats { font-family:'JetBrains Mono',monospace; font-size:10px; fill:#768390; }
+          .af  { font-family:'JetBrains Mono',monospace; font-size:9px; fill:#444c56; }
+          .aline { fill:none; stroke-width:1.2; }
+          .adash { fill:none; stroke-width:1; stroke-dasharray:4 3; stroke:rgba(88,166,255,0.4); }
+        </style>
+
+        <text class="af" x="22" y="70"  text-anchor="middle" transform="rotate(-90,22,70)">Source</text>
+        <text class="af" x="22" y="192" text-anchor="middle" transform="rotate(-90,22,192)">CI / Scan</text>
+        <text class="af" x="22" y="330" text-anchor="middle" transform="rotate(-90,22,330)">Registry</text>
+        <text class="af" x="22" y="430" text-anchor="middle" transform="rotate(-90,22,430)">GitOps</text>
+        <text class="af" x="22" y="545" text-anchor="middle" transform="rotate(-90,22,545)">Runtime</text>
+
+        <rect class="ab" x="50" y="42" width="130" height="52" rx="8"/>
+        <text class="at" x="115" y="62" text-anchor="middle">Developer</text>
+        <text class="ats" x="115" y="80" text-anchor="middle">git push</text>
+
+        <line x1="180" y1="68" x2="258" y2="68" class="aline" stroke="#58a6ff" marker-end="url(#arr2)"/>
+
+        <rect class="ab-blue" x="260" y="42" width="170" height="52" rx="8"/>
+        <text class="at" x="345" y="62" text-anchor="middle">GitHub Repository</text>
+        <text class="ats" x="345" y="80" text-anchor="middle">source + manifests</text>
+
+        <line x1="345" y1="94" x2="345" y2="130" class="aline" stroke="#58a6ff" marker-end="url(#arr2)"/>
+        <rect x="44" y="132" width="732" height="120" rx="10" fill="none" stroke="rgba(88,166,255,0.14)" stroke-width="1" stroke-dasharray="5 4"/>
+        <text class="af" x="58" y="150">GitHub Actions CI/CD</text>
+
+        <rect class="ab-blue" x="56" y="157" width="138" height="44" rx="6"/>
+        <text class="at" x="125" y="175" text-anchor="middle">Docker build</text>
+        <text class="ats" x="125" y="191" text-anchor="middle">ARM64 + AMD64</text>
+
+        <line x1="194" y1="179" x2="226" y2="179" class="aline" stroke="#58a6ff" marker-end="url(#arr2)"/>
+
+        <rect class="ab-amber" x="228" y="157" width="138" height="44" rx="6"/>
+        <text class="at" x="297" y="175" text-anchor="middle">Trivy scan</text>
+        <text class="ats" x="297" y="191" text-anchor="middle">block HIGH/CRIT</text>
+
+        <line x1="366" y1="179" x2="398" y2="179" class="aline" stroke="#58a6ff" marker-end="url(#arr2)"/>
+
+        <rect class="ab-teal" x="400" y="157" width="138" height="44" rx="6"/>
+        <text class="at" x="469" y="175" text-anchor="middle">Push to registry</text>
+        <text class="ats" x="469" y="191" text-anchor="middle">versioned tag</text>
+
+        <line x1="538" y1="179" x2="568" y2="179" class="aline" stroke="#58a6ff" marker-end="url(#arr2)"/>
+
+        <rect class="ab" x="570" y="157" width="138" height="44" rx="6" stroke="rgba(255,255,255,0.08)"/>
+        <text class="at" x="639" y="175" text-anchor="middle">Update manifest</text>
+        <text class="ats" x="639" y="191" text-anchor="middle">deployment.yaml tag</text>
+
+        <line x1="469" y1="201" x2="469" y2="278" class="aline" stroke="#3fb950" marker-end="url(#arr2)"/>
+        <rect class="ab-teal" x="354" y="280" width="230" height="52" rx="8"/>
+        <text class="at" x="469" y="300" text-anchor="middle">Docker Hub</text>
+        <text class="ats" x="469" y="318" text-anchor="middle">image registry</text>
+
+        <path d="M345 264 L345 378 L302 378 L302 398" class="adash" marker-end="url(#arr2)"/>
+        <text class="ats" x="325" y="374">watches Git</text>
+
+        <line x1="469" y1="332" x2="469" y2="398" class="aline" stroke="#3fb950" marker-end="url(#arr2)"/>
+
+        <rect class="ab-purple" x="186" y="400" width="200" height="52" rx="8"/>
+        <text class="at" x="286" y="420" text-anchor="middle">Argo CD</text>
+        <text class="ats" x="286" y="438" text-anchor="middle">sync from Git</text>
+
+        <rect class="ab-purple" x="396" y="400" width="200" height="52" rx="8"/>
+        <text class="at" x="496" y="420" text-anchor="middle">Argo CD</text>
+        <text class="ats" x="496" y="438" text-anchor="middle">pull image + deploy</text>
+
+        <line x1="286" y1="452" x2="286" y2="488" class="aline" stroke="#a371f7" marker-end="url(#arr2)"/>
+        <line x1="496" y1="452" x2="496" y2="488" class="aline" stroke="#a371f7" marker-end="url(#arr2)"/>
+
+        <rect x="44" y="490" width="732" height="118" rx="12" fill="none" stroke="rgba(63,185,80,0.2)" stroke-width="1" stroke-dasharray="5 4"/>
+        <text class="af" x="58" y="508">Kubernetes (Minikube)</text>
+
+        <rect class="ab-teal" x="56" y="514" width="120" height="44" rx="6"/>
+        <text class="at" x="116" y="532" text-anchor="middle">Resume app</text>
+        <text class="ats" x="116" y="548" text-anchor="middle">NGINX + Ingress</text>
+
+        <rect class="ab-red" x="192" y="514" width="120" height="44" rx="6"/>
+        <text class="at" x="252" y="532" text-anchor="middle">Falco</text>
+        <text class="ats" x="252" y="548" text-anchor="middle">container security</text>
+
+        <rect class="ab-amber" x="328" y="514" width="130" height="44" rx="6"/>
+        <text class="at" x="393" y="532" text-anchor="middle">Falcosidekick</text>
+        <text class="ats" x="393" y="548" text-anchor="middle">alert routing</text>
+
+        <rect class="ab-blue" x="474" y="514" width="110" height="44" rx="6"/>
+        <text class="at" x="529" y="532" text-anchor="middle">Prometheus</text>
+        <text class="ats" x="529" y="548" text-anchor="middle">metrics</text>
+
+        <rect class="ab-green" x="600" y="514" width="100" height="44" rx="6"/>
+        <text class="at" x="650" y="532" text-anchor="middle">Grafana</text>
+        <text class="ats" x="650" y="548" text-anchor="middle">dashboard</text>
+
+        <line x1="312" y1="536" x2="326" y2="536" class="aline" stroke="#f85149" marker-end="url(#arr2)"/>
+        <line x1="458" y1="536" x2="472" y2="536" class="aline" stroke="#d29922" marker-end="url(#arr2)"/>
+        <line x1="584" y1="536" x2="598" y2="536" class="aline" stroke="#58a6ff" marker-end="url(#arr2)"/>
+      </svg>
     </div>
 
-    <div class="project-card">
-      <div class="project-header">
-        <p class="project-name">PentestAGI — AI-augmented penetration testing</p>
-        <span class="project-tag tag-amber">Research · 2025–2026</span>
-      </div>
-      <p class="project-meta">Agentic AI security tooling · use-case evaluation</p>
-      <ul class="project-bullets">
-        <li>Evaluated an AI-driven autonomous penetration testing agent across multiple attack-surface use cases, assessing its ability to perform reconnaissance, vulnerability discovery, and exploitation chaining without manual guidance.</li>
-        <li>Tested agent behaviour across web application targets—validated subdomain enumeration, service fingerprinting, and automated OWASP Top 10 probe generation, benchmarking findings against manual methodology.</li>
-        <li>Investigated prompt-injection resistance and guardrail bypass scenarios to understand where agentic AI fails safely versus unsafely in adversarial contexts.</li>
-        <li>Documented operational limits, false-positive rates, and integration gaps to inform future red-team augmentation workflows.</li>
-      </ul>
+    <!-- DOCUMENTATION -->
+    <p class="sec-label mb-14">Project documentation</p>
+
+    <div class="doc-section">
+      <div class="doc-h2">Overview</div>
+      <p class="doc-p">An end-to-end DevSecOps pipeline built to demonstrate how modern security practices integrate natively into a software delivery workflow — not bolted on at the end. Every code push triggers an automated chain: vulnerability scans run before any image ships, deployment is driven by Git state rather than manual commands, and every container action in the cluster is watched for suspicious behaviour.</p>
+    </div>
+
+    <div class="doc-section">
+      <div class="doc-h2">Pipeline flow</div>
+      <div class="doc-code"><span class="c-blue">Developer</span> (git push)
+    │
+    ▼
+<span class="c-blue">GitHub Repository</span>          source code + Kubernetes manifests
+    │
+    ▼
+<span class="c-blue">GitHub Actions CI/CD</span>
+    ├── Docker build               ARM64 + AMD64 multi-arch
+    ├── <span class="c-amber">Trivy scan</span>                 block on HIGH / CRITICAL CVEs
+    ├── Push to Docker Hub         versioned image tag
+    └── Update deployment.yaml     manifest auto-update (in progress)
+                  │
+                  ▼
+            <span class="c-purple">Argo CD</span>                    watches Git → deploys automatically
+                  │
+                  ▼
+        <span class="c-green">Kubernetes (Minikube)</span>
+                  │
+      ┌───────────┼──────────────┐
+      │           │              │
+      ▼           ▼              ▼
+ Resume app    <span class="c-red">Falco</span>        Prometheus
+                  │                  │
+                  ▼                  ▼
+            Falcosidekick         <span class="c-green">Grafana</span></div>
+    </div>
+
+    <div class="doc-section">
+      <div class="doc-h2">Component breakdown</div>
+      <table class="doc-table">
+        <thead><tr><th>Component</th><th>What it does</th></tr></thead>
+        <tbody>
+          <tr><td>Docker</td><td>Packages the resume website into a container. Runs as a non-root user with minimal Linux capabilities — if the container is compromised, the attacker has very limited reach.</td></tr>
+          <tr><td>GitHub Actions</td><td>Automates the full build-scan-push-deploy chain on every commit. No manual steps between code and cluster.</td></tr>
+          <tr><td>Trivy</td><td>Scans both the filesystem and the final Docker image for known CVEs. Any High or Critical finding blocks the pipeline — nothing ships until it's clean.</td></tr>
+          <tr><td>Docker Hub</td><td>Stores versioned image tags. Only images that passed the Trivy gate land here.</td></tr>
+          <tr><td>Argo CD</td><td>Watches the Git repository for manifest changes. When a new image tag appears, it automatically synchronises the Kubernetes cluster — the Git repo is the single source of truth for what runs.</td></tr>
+          <tr><td>Kubernetes</td><td>Runs the application on a Minikube cluster with NGINX Ingress for traffic routing. Pod Security Contexts enforce non-root execution and drop default capabilities.</td></tr>
+          <tr><td>Falco</td><td>Container security agent running inside the cluster. Watches every container action at the kernel level — shells spawned, API server contacts, unexpected file writes — and fires a structured alert when a rule matches.</td></tr>
+          <tr><td>Falcosidekick</td><td>Routes Falco alerts to Prometheus for metric aggregation and persistence.</td></tr>
+          <tr><td>Prometheus</td><td>Scrapes Falco metrics on a configured interval, stores them as time-series data for querying.</td></tr>
+          <tr><td>Grafana</td><td>Visualises Prometheus data across panels: total alerts, severity breakdown, top rules, alerts by pod, and a live event feed.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="doc-section">
+      <div class="doc-h2">Security principles</div>
+      <table class="doc-table">
+        <thead><tr><th>Principle</th><th>Implementation</th></tr></thead>
+        <tbody>
+          <tr><td>Shift left</td><td>Trivy scans happen before the image reaches any registry — vulnerability gates are in the pipeline, not an afterthought.</td></tr>
+          <tr><td>Immutable infra</td><td>No one logs into a server to make changes. Every change goes through Git and is applied by Argo CD.</td></tr>
+          <tr><td>Least privilege</td><td>Containers run non-root with dropped capabilities. Minimal blast radius on any breakout.</td></tr>
+          <tr><td>Runtime visibility</td><td>Falco provides continuous monitoring after deployment — unexpected container behaviour is detected and recorded immediately.</td></tr>
+          <tr><td>GitOps</td><td>Git is the source of truth. Cluster state is always a direct reflection of the repository — no drift, no snowflakes.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="doc-section">
+      <div class="doc-h2">Test alerts generated</div>
+      <table class="doc-table">
+        <thead><tr><th>Rule triggered</th><th>Action</th><th>Severity</th></tr></thead>
+        <tbody>
+          <tr><td>Terminal shell in container</td><td>kubectl exec into a running pod</td><td><span class="badge badge-green" style="font-size:10px;">notice</span></td></tr>
+          <tr><td>Run shell untrusted</td><td>Process spawned a shell outside expected startup paths</td><td><span class="badge badge-green" style="font-size:10px;">notice</span></td></tr>
+          <tr><td>Contact K8s API server</td><td>Pod attempted to reach the cluster control plane</td><td><span class="badge badge-green" style="font-size:10px;">notice</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="doc-section">
+      <div class="doc-h2">Remaining work</div>
+      <table class="doc-table">
+        <thead><tr><th>Task</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>Manifest auto-update</td><td>GitHub Actions commits the new image tag to deployment.yaml after a successful push</td></tr>
+          <tr><td>GitHub Pages</td><td>Portfolio hosted publicly at a custom domain</td></tr>
+          <tr><td>Automation scripts</td><td>install.sh, start.sh, port-forward.sh to reproduce the environment from scratch</td></tr>
+        </tbody>
+      </table>
     </div>
 
   </div>
 
-  <!-- ══ PANEL 2 — EXPERIENCE ══ -->
-  <div id="panel-experience" class="tab-panel">
-
-    <p class="sec-label mb-14">Career history</p>
-
-    <div class="job-list">
-
-      <div class="job">
-        <div class="job-meta">
-          <div class="job-title-wrap">
-            <span class="job-title">Senior Cybersecurity Engineer</span>
-            <span class="current-tag">Current</span>
-          </div>
-          <span class="job-date">Aug 2025 – Present</span>
-        </div>
-        <p class="job-company">Network18 Media &amp; Investments Limited · Mumbai</p>
-        <ul class="job-bullets">
-          <li>Led enterprise-wide security monitoring across CrowdStrike Falcon and Google Chronicle SIEM, triaging 100+ alerts per week and reducing MTTD by 30% through streamlined triage workflows.</li>
-          <li>Conducted proactive threat hunting across endpoint, network, and cloud environments; validated IOCs against MITRE ATT&amp;CK and executed containment per documented IR procedures.</li>
-          <li>Managed Akamai WAF for 20+ business-critical applications—URL onboarding, bespoke security policy creation, and rule integrity maintenance across production environments.</li>
-          <li>Optimised whitelist strategies, bot management configurations, and behavioural traffic directives, reducing false-positive rate by 25%; collaborated with DevOps for zero-downtime deployments.</li>
-          <li>Led end-to-end vulnerability management using CVSS-based identification, prioritisation, tracking, and remediation for critical CVEs across infrastructure and cloud applications.</li>
-        </ul>
-      </div>
-
-      <div class="job">
-        <div class="job-meta">
-          <div class="job-title-wrap">
-            <span class="job-title">Senior SOC Analyst</span>
-          </div>
-          <span class="job-date">Mar 2024 – Aug 2025</span>
-        </div>
-        <p class="job-company">NTT Global Data Centers &amp; Cloud Infrastructure India Limited · Mumbai</p>
-        <ul class="job-bullets">
-          <li>Oversaw WAF migration from F5 Silverline to F5 XC for 10+ enterprise clients; managed planning, implementation, SSL certificate updates, and post-migration validation with zero production downtime.</li>
-          <li>Monitored and investigated security logs via IBM QRadar SIEM; performed root cause analysis and in-depth malware analysis (static and behavioural) to determine scope and impact.</li>
-          <li>Conducted cloud security risk assessments using WIZ and Orca Security; identified and prioritised misconfigurations by risk exposure and tracked remediation to closure.</li>
-        </ul>
-      </div>
-
-      <div class="job">
-        <div class="job-meta">
-          <div class="job-title-wrap">
-            <span class="job-title">Test Engineer — Network Security</span>
-          </div>
-          <span class="job-date">Oct 2023 – Mar 2024</span>
-        </div>
-        <p class="job-company">Clear Trail · Indore</p>
-        <ul class="job-bullets">
-          <li>Contributed to the ComTrail-NX Target Oriented System; created datasets for diverse protocols with in-depth understanding of L2/L3/L4/L7 per the OSI model.</li>
-          <li>Performed Deep Packet Inspection (DPI), configured test topologies, and conducted packet analysis using Wireshark to validate network traffic behaviour.</li>
-        </ul>
-      </div>
-
-      <div class="job">
-        <div class="job-meta">
-          <div class="job-title-wrap">
-            <span class="job-title">Test Engineer</span>
-          </div>
-          <span class="job-date">Mar 2022 – Oct 2023</span>
-        </div>
-        <p class="job-company">Code Young · Bengaluru</p>
-        <ul class="job-bullets">
-          <li>Configured and optimised Akamai WAF for enterprise applications against OWASP Top 10 vulnerabilities; crafted custom rule sets with regular tuning to minimise false positives.</li>
-          <li>Achieved a 40% reduction in cloud security risks within three months by deploying and tuning Orca Security across the cloud environment.</li>
-        </ul>
-      </div>
-
-      <div class="job">
-        <div class="job-meta">
-          <div class="job-title-wrap">
-            <span class="job-title">Graduate Engineer Trainee — OT/IT Security</span>
-          </div>
-          <span class="job-date">Nov 2020 – Jan 2022</span>
-        </div>
-        <p class="job-company">Bharat Petroleum Corporation Limited (BPCL) · Mumbai</p>
-        <ul class="job-bullets">
-          <li>Collaborated with the SCADA Security Team to strengthen OT/IT network security protocols across critical petroleum infrastructure.</li>
-        </ul>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- ══ PANEL 3 — CREDENTIALS ══ -->
+  <!-- PANEL 4: CREDENTIALS -->
   <div id="panel-credentials" class="tab-panel">
 
     <p class="sec-label mb-14">Education</p>
-    <div class="edu-block mb-28">
-      <p class="edu-degree">Bachelor of Engineering</p>
-      <p class="edu-school">University of Mumbai · 2019</p>
+    <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px 22px;margin-bottom:28px;">
+      <p style="font-size:14.5px;font-weight:600;color:#e6edf3;margin-bottom:3px;">Bachelor of Engineering</p>
+      <p style="font-family:var(--mono);font-size:12px;color:var(--muted);">University of Mumbai · 2019</p>
     </div>
 
     <p class="sec-label mb-14">Certifications</p>
-    <div class="cert-list">
-
-      <div class="cert-item">
-        <div class="cert-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path stroke="currentColor" d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    <div style="display:flex;flex-direction:column;gap:6px;">
+      <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-md);font-size:13px;color:var(--text);">
+        <div style="width:30px;height:30px;border-radius:var(--r-sm);background:var(--accent-dim);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
         </div>
         Certified Ethical Hacker (CEHv13)
       </div>
-
-      <div class="cert-item">
-        <div class="cert-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path stroke="currentColor" d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-md);font-size:13px;color:var(--text);">
+        <div style="width:30px;height:30px;border-radius:var(--r-sm);background:var(--accent-dim);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
         </div>
         Cortex XDR: Multi-Method Malware Prevention
       </div>
-
-      <div class="cert-item">
-        <div class="cert-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path stroke="currentColor" d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-md);font-size:13px;color:var(--text);">
+        <div style="width:30px;height:30px;border-radius:var(--r-sm);background:var(--accent-dim);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
         </div>
         Akamai Web Performance Foundations
       </div>
-
     </div>
 
   </div>
@@ -812,17 +553,13 @@
 </div>
 
 <script>
-  function switchTab(id, btn) {
-    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.tab-btn').forEach(b => {
-      b.classList.remove('active');
-      b.setAttribute('aria-selected','false');
-    });
-    document.getElementById('panel-' + id).classList.add('active');
-    btn.classList.add('active');
-    btn.setAttribute('aria-selected','true');
-  }
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
+  document.getElementById('panel-' + id).classList.add('active');
+  btn.classList.add('active');
+  btn.setAttribute('aria-selected','true');
+}
 </script>
-
 </body>
 </html>
