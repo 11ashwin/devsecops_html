@@ -5,57 +5,91 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write
+
 jobs:
   build-and-push:
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # SECURITY GATE 1: Scan Infrastructure as Code (IaC) & Dockerfile
+      # SECURITY GATE 1: Scan Repository & Dockerfile
       - name: Run Trivy FS Scan
         uses: aquasecurity/trivy-action@master
         with:
-          scan-type: 'fs'
-          scan-ref: '.'
-          format: 'table'
-          severity: 'HIGH,CRITICAL'
+          scan-type: fs
+          scan-ref: .
+          format: table
+          severity: HIGH,CRITICAL
 
-      # Build a local, temporary image to scan before pushing
-      - name: Build local image for scanning
-        run: docker build -t temp-scan-image:latest ./app
+      # Build temporary image for scanning
+      - name: Build Local Image for Scanning
+        run: |
+          docker build -t temp-scan-image:latest ./app
 
-      # SECURITY GATE 2: Scan the container image for CVEs
+      # SECURITY GATE 2: Scan Docker Image
       - name: Run Trivy Image Scan
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: 'temp-scan-image:latest'
-          format: 'table'
-          # NOTE: Set to '0' to show the report without breaking the pipeline.
-          # In strict production, change this to '1' to block vulnerable deployments.
-          exit-code: '1' 
+          image-ref: temp-scan-image:latest
+          format: table
+          exit-code: 1
           ignore-unfixed: true
-          vuln-type: 'os,library'
-          severity: 'HIGH,CRITICAL'
+          vuln-type: os,library
+          severity: HIGH,CRITICAL
 
+      # Setup Multi-Architecture Build
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      # Login to Docker Hub
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
+      # Build & Push Image
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v5
         with:
           context: ./app
           file: ./app/Dockerfile
-          platforms: linux/amd64,linux/arm64
           push: true
-          tags: a05shwin11/devsecops_html:v${{ github.run_number }}
+          platforms: linux/amd64,linux/arm64
+          tags: |
+            a05shwin11/devsecops_html:v${{ github.run_number }}
+            a05shwin11/devsecops_html:latest
+
+      # Update Kubernetes Deployment Manifest
+      - name: Update Deployment Image Tag
+        run: |
+          sed -i "s|image: .*|image: a05shwin11/devsecops_html:v${{ github.run_number }}|g" kubernetes/deployment.yaml
+
+      # Commit Updated Manifest
+      - name: Commit Deployment Manifest
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add kubernetes/deployment.yaml
+
+          if git diff --cached --quiet; then
+            echo "No deployment changes detected."
+          else
+            git commit -m "ci: update image to v${{ github.run_number }}"
+          fi
+
+      # Push Back to GitHub
+      - name: Push Changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main

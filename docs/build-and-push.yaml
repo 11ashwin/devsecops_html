@@ -1,0 +1,61 @@
+name: DevSecOps CI Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # SECURITY GATE 1: Scan Infrastructure as Code (IaC) & Dockerfile
+      - name: Run Trivy FS Scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'table'
+          severity: 'HIGH,CRITICAL'
+
+      # Build a local, temporary image to scan before pushing
+      - name: Build local image for scanning
+        run: docker build -t temp-scan-image:latest ./app
+
+      # SECURITY GATE 2: Scan the container image for CVEs
+      - name: Run Trivy Image Scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'temp-scan-image:latest'
+          format: 'table'
+          # NOTE: Set to '0' to show the report without breaking the pipeline.
+          # In strict production, change this to '1' to block vulnerable deployments.
+          exit-code: '1' 
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'HIGH,CRITICAL'
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./app
+          file: ./app/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: a05shwin11/devsecops_html:v${{ github.run_number }}

@@ -11,7 +11,7 @@ spec:
   source:
     repoURL: https://github.com/11ashwin/devsecops_html.git
     targetRevision: main
-    path: .
+    path: kubernetes
 
   destination:
     server: https://kubernetes.default.svc
