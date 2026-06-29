@@ -264,9 +264,9 @@
         <tr><td>Falco runtime security</td><td>Container threat detection + alerting</td><td><span class="badge badge-green">Complete</span></td></tr>
         <tr><td>Prometheus</td><td>Metrics scraping, ServiceMonitor configured</td><td><span class="badge badge-green">Complete</span></td></tr>
         <tr><td>Grafana dashboard</td><td>Severity, rules, namespace, pod panels</td><td><span class="badge badge-green">Complete</span></td></tr>
-        <tr><td>Manifest auto-update</td><td>GitHub Actions updates deployment.yaml tag</td><td><span class="badge badge-amber">In progress</span></td></tr>
-        <tr><td>GitHub Pages</td><td>Public portfolio hosting</td><td><span class="badge badge-amber">Planned</span></td></tr>
-        <tr><td>Automation scripts</td><td>install.sh, start.sh, port-forward.sh</td><td><span class="badge badge-amber">Planned</span></td></tr>
+        <tr><td>Manifest auto-update</td><td>GitHub Actions updates deployment.yaml tag</td><td><span class="badge badge-green">Complete</span></td></tr>
+        <tr><td>GitHub Pages</td><td>Public portfolio hosting</td><td><span class="badge badge-green">Complete</span></td></tr>
+        <tr><td>Automation scripts</td><td>install.sh, start.sh, port-forward.sh</td><td><span class="badge badge-green">Complete</span></td></tr>
       </tbody>
     </table>
   </div>
@@ -319,8 +319,8 @@
       </div>
     </div>
 
-    <!-- Charts row: 2fr + 1fr + 1fr -->
-    <div class="dash-3col" style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:7px;margin-bottom:7px;">
+    <!-- Charts row: 2fr + 1fr -->
+    <div class="dash-3col" style="display:grid;grid-template-columns:2fr 1fr;gap:7px;margin-bottom:7px;">
       <div class="dpanel">
         <div class="dpanel-title">📈 Alerts over time</div>
         <div style="position:relative;height:130px;"><canvas id="d-time-chart"></canvas></div>
@@ -329,11 +329,6 @@
         <div class="dpanel-title">🔥 By severity</div>
         <div style="position:relative;height:95px;"><canvas id="d-sev-chart"></canvas></div>
         <div class="dash-legend" id="d-sev-legend" style="margin-top:8px;"></div>
-      </div>
-      <div class="dpanel">
-        <div class="dpanel-title">🐳 By pod</div>
-        <div style="position:relative;height:95px;"><canvas id="d-pod-chart"></canvas></div>
-        <div class="dash-legend" id="d-pod-legend" style="margin-top:8px;"></div>
       </div>
     </div>
 
@@ -626,18 +621,6 @@ function initDashboard() {
     options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{display:false},tooltip:TT}}
   });
   const leg=document.getElementById('d-sev-legend');
-  sl.forEach((l,i)=>{ leg.innerHTML+=`<div class="dash-legend-item"><div class="dash-legend-dot" style="background:${sc[i]}"></div>${l}&nbsp;(${sd[i]})</div>`; });
-
-  const pc=['#3fb950','#d29922'];
-  new Chart(document.getElementById('d-pod-chart'),{
-    type:'bar',
-    data:{labels:['2026'],datasets:D.pods.map((p,i)=>({label:p.name,data:[p.count],backgroundColor:pc[i]+'88',borderColor:pc[i],borderWidth:1,borderRadius:3}))},
-    options:{responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:false},tooltip:TT},
-      scales:{x:{grid:GR,ticks:TX},y:{grid:GR,ticks:{...TX,stepSize:1,precision:0},min:0}}}
-  });
-  const pl=document.getElementById('d-pod-legend');
-  D.pods.forEach((p,i)=>{ pl.innerHTML+=`<div class="dash-legend-item"><div class="dash-legend-dot" style="background:${pc[i]}"></div>${p.name}&nbsp;(${p.count})</div>`; });
 
   const mx=Math.max(...D.rules.map(r=>r.count));
   const rt=document.getElementById('d-rule-table');
