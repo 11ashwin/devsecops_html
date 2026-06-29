@@ -66,7 +66,6 @@ jobs:
           platforms: linux/amd64,linux/arm64
           tags: |
             a05shwin11/devsecops_html:v${{ github.run_number }}
-            a05shwin11/devsecops_html:latest
 
       # Update Kubernetes Deployment Manifest
       - name: Update Deployment Image Tag
