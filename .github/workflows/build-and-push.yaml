@@ -25,7 +25,6 @@ jobs:
         with:
           path: ./
           base: main
-          head: HEAD
           
           # extra_args: --only-verified # Uncomment this later if you only want to fail on LIVE/VALID secrets.
 
