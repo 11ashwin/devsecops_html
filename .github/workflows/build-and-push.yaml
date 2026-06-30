@@ -16,6 +16,11 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+      
+      - name: Gitleaks Scan
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # SECURITY GATE 1: Scan Repository & Dockerfile
       - name: Run Trivy FS Scan
