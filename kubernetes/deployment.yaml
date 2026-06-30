@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: resume-container
-        image: a05shwin11/devsecops_html:v19
+        image: a05shwin11/devsecops_html:v21
         imagePullPolicy: Always
         ports:
         - containerPort: 80
