@@ -6,6 +6,7 @@ metadata:
     app: secure-resume
 spec:
   replicas: 2 # Runs two copies for high availability
+  revisionHistoryLimit: 2   # Keep only the last 2 ReplicaSets
   selector:
     matchLabels:
       app: secure-resume

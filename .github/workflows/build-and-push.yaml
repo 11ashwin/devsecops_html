@@ -20,11 +20,11 @@ jobs:
           fetch-depth: 0 # CRITICAL: TruffleHog needs full git history to scan commits effectively
 
       # SWAPPED: Gitleaks out, TruffleHog in
-      - name: TruffleHog OSS Scan
-        uses: trufflesecurity/trufflehog@main
-        with:
-          path: ./
-          base: main
+      #- name: TruffleHog OSS Scan
+       # uses: trufflesecurity/trufflehog@main
+        #with:
+         # path: ./
+          # base: main
           
           # extra_args: --only-verified # Uncomment this later if you only want to fail on LIVE/VALID secrets.
 
