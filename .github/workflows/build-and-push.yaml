@@ -14,19 +14,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # ----------------------------------------------------
       # Checkout Repository
+      # ----------------------------------------------------
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
+      # ----------------------------------------------------
       # Secret Scanning (Optional)
+      # ----------------------------------------------------
       # - name: TruffleHog OSS Scan
       #   uses: trufflesecurity/trufflehog@main
       #   with:
       #     path: ./
       #     base: main
-      #     # extra_args: --only-verified
 
       # ----------------------------------------------------
       # SECURITY GATE 1 - Repository Scan
@@ -96,9 +99,10 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       # ----------------------------------------------------
-      # Build & Push Image
+      # Build & Push Docker Image
       # ----------------------------------------------------
       - name: Build and Push Docker Image
+        id: build
         uses: docker/build-push-action@v5
         with:
           context: ./app
@@ -107,6 +111,44 @@ jobs:
           platforms: linux/amd64,linux/arm64
           tags: |
             a05shwin11/devsecops_html:v${{ github.run_number }}
+
+      # ----------------------------------------------------
+      # Install Cosign
+      # ----------------------------------------------------
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3
+
+      # ----------------------------------------------------
+      # Recreate Cosign Keys
+      # ----------------------------------------------------
+      - name: Create Cosign Private Key
+        run: |
+          echo "${{ secrets.COSIGN_PRIVATE_KEY }}" > cosign.key
+
+      - name: Create Cosign Public Key
+        run: |
+          echo "${{ secrets.COSIGN_PUBLIC_KEY }}" > cosign.pub
+
+      # ----------------------------------------------------
+      # Sign Docker Image
+      # ----------------------------------------------------
+      - name: Sign Docker Image
+        env:
+          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+        run: |
+          cosign sign \
+            --key cosign.key \
+            --yes \
+            a05shwin11/devsecops_html@${{ steps.build.outputs.digest }}
+
+      # ----------------------------------------------------
+      # Verify Signature
+      # ----------------------------------------------------
+      - name: Verify Image Signature
+        run: |
+          cosign verify \
+            --key cosign.pub \
+            a05shwin11/devsecops_html@${{ steps.build.outputs.digest }}
 
       # ----------------------------------------------------
       # Update Kubernetes Manifest
