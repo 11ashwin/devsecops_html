@@ -14,6 +14,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
       # ----------------------------------------------------
       # Checkout Repository
       # ----------------------------------------------------
@@ -23,13 +24,14 @@ jobs:
           fetch-depth: 0
 
       # ----------------------------------------------------
-      # Secret Scanning (Optional)
+      # SECURITY GATE 0 - SAST
       # ----------------------------------------------------
-      # - name: TruffleHog OSS Scan
-      #   uses: trufflesecurity/trufflehog@main
-      #   with:
-      #     path: ./
-      #     base: main
+      - name: Run Semgrep SAST
+        uses: semgrep/semgrep-action@v1
+        with:
+          config: >-
+            p/javascript
+            p/security-audit
 
       # ----------------------------------------------------
       # SECURITY GATE 1 - Repository Scan
@@ -41,13 +43,17 @@ jobs:
           scan-ref: .
           format: table
           severity: HIGH,CRITICAL
+          exit-code: 1
+          ignore-unfixed: true
 
       # ----------------------------------------------------
       # Build Temporary Image
       # ----------------------------------------------------
       - name: Build Local Image for Scanning
         run: |
-          docker build -t temp-scan-image:latest ./app
+          docker build \
+            -t temp-scan-image:latest \
+            ./app
 
       # ----------------------------------------------------
       # SECURITY GATE 2 - Image Scan
@@ -61,6 +67,77 @@ jobs:
           ignore-unfixed: true
           vuln-type: os,library
           severity: HIGH,CRITICAL
+
+      # ----------------------------------------------------
+      # SECURITY GATE 3 - DAST
+      # ----------------------------------------------------
+      - name: Start Application for DAST
+        run: |
+          docker run -d \
+            --name dast-target \
+            -p 8080:80 \
+            temp-scan-image:latest
+
+      # ----------------------------------------------------
+      # Wait for Application
+      # ----------------------------------------------------
+      - name: Wait for Application
+        run: |
+          echo "Waiting for application..."
+
+          for i in {1..30}; do
+            if curl -fs http://localhost:8080; then
+              echo ""
+              echo "Application is ready."
+              exit 0
+            fi
+
+            echo "Waiting... ($i/30)"
+            sleep 2
+          done
+
+          echo "Application failed to start."
+
+          docker logs dast-target
+
+          exit 1
+
+      # ----------------------------------------------------
+      # OWASP ZAP Baseline DAST Scan
+      # ----------------------------------------------------
+      - name: Run OWASP ZAP DAST
+        run: |
+          docker run --rm \
+            --network host \
+            -v "${{ github.workspace }}:/zap/wrk/:rw" \
+            ghcr.io/zaproxy/zaproxy:stable \
+            zap-baseline.py \
+            -t http://localhost:8080 \
+            -r zap-report.html \
+            -J zap-report.json \
+            -w zap-report.md
+
+      # ----------------------------------------------------
+      # Upload ZAP Reports
+      # ----------------------------------------------------
+      - name: Upload ZAP Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: zap-dast-report-v${{ github.run_number }}
+          path: |
+            zap-report.html
+            zap-report.json
+            zap-report.md
+
+      # ----------------------------------------------------
+      # Stop DAST Target
+      # ----------------------------------------------------
+      - name: Stop DAST Application
+        if: always()
+        run: |
+          docker stop dast-target || true
+          docker rm dast-target || true
 
       # ----------------------------------------------------
       # Generate Software Bill of Materials (SBOM)
